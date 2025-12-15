@@ -53,8 +53,8 @@ jobs:
 
       - name: Check App
         run: |
-          echo "127.0.0.1 local.symfo7.fr" | sudo tee -a /etc/hosts
-          HTTP_CODE=$(curl -ik -X GET 'https://local.symfo7.fr/health-check' -o /dev/null -w '%{http_code}\n' -s)
+          echo "127.0.0.1 local.shop-menace-kult.fr" | sudo tee -a /etc/hosts
+          HTTP_CODE=$(curl -ik -X GET 'https://local.shop-menace-kult.fr/health-check' -o /dev/null -w '%{http_code}\n' -s)
           if [ "$HTTP_CODE" = "200" ]; then
               exit 0
           fi
