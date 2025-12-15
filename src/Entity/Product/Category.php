@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity\Product;
 
+use App\Entity\Product\Products;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity()]
+#[ORM\Entity]
 class Category
 {
     #[ORM\Id, ORM\Column(type: 'uuid', unique: true)]
@@ -29,6 +30,11 @@ class Category
     public function __construct()
     {
         $this->products = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->name ?? '';
     }
 
     public function getProducts()

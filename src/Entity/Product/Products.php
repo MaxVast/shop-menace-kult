@@ -39,13 +39,13 @@ class Products {
     private ?Category $category = null;
 
     #[ORM\OneToMany(targetEntity: ProductsImage::class, mappedBy: 'products', cascade: ['remove', 'persist'], orphanRemoval: true)]
-    #[Assert\Count(min: 1)]
+    #[Assert\Count(min: 1, max: 10)]
     public Collection $images;
 
     #[ORM\Column(type: 'integer')]
     private int $price;
 
-    #[ORM\Column(type: 'int', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $stock = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
@@ -68,12 +68,13 @@ class Products {
 
     #[ORM\Column]
     #[Assert\NotBlank, Assert\Choice(Products::STATUSES)]
-    private string $status;
+    private string $status = 'draft';
 
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Gedmo\Timestampable(on: 'update')]
     private ?\DateTimeInterface  $updatedAt = null;
 
     public function __construct()

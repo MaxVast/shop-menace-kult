@@ -6,7 +6,10 @@ use App\Entity\Product\Products;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+#[ORM\Entity, ORM\Table(name: 'products_image')]
+#[Vich\Uploadable]
 class ProductsImage extends MediaObject
 {
     #[Assert\Valid]
@@ -14,7 +17,24 @@ class ProductsImage extends MediaObject
     protected ?Products $products = null;
 
     #[Assert\NotNull, Assert\File(maxSize: '2M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'])]
+    #[Vich\UploadableField(mapping: 'product_images', fileNameProperty: 'name')]
     public ?File $file;
+
+    /**
+     * @param File|null $file
+     */
+    public function setFile(?File $file): void
+    {
+        $this->file = $file;
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
 
     public function getProducts(): ?Products
     {
