@@ -20,7 +20,7 @@ services:
         idekey=PHPSTORM
       # This should correspond to the server declared in PHPStorm `Preferences | Languages & Frameworks | PHP | Servers`
       # Then PHPStorm will use the corresponding path mappings
-      PHP_IDE_CONFIG: serverName=local.symfo7.fr
+      PHP_IDE_CONFIG: serverName=local.shop-menace-kult.fr
 
   build-php:
     image: ghcr.io/maxvast/build-php8.4:latest
@@ -36,18 +36,17 @@ services:
       - ./docker/nginx/conf/project.conf.template:/etc/nginx/templates/project.conf.template
 
   database:
-    image: mysql:5.7.34
-    init: true
-    environment:
-      - MYSQL_DATABASE=symfo7
-      - MYSQL_USER=csymfo7
-      - MYSQL_PASSWORD=symfo7
-      - MYSQL_ROOT_PASSWORD=root
-    volumes:
-      - db_mysql:/var/lib/mysql
-    ports:
-      - "3306:3306"
-
+      image: postgres:13-alpine
+      environment:
+          - POSTGRES_DB=shop
+          - POSTGRES_USER=shop
+          - POSTGRES_PASSWORD=shop
+      volumes:
+          - db_data:/var/lib/postgresql/data:rw
+      ports:
+          -   target: 5432
+              published: 5432
+              protocol: tcp
 
 volumes:
-  db_mysql:
+  db_data:
