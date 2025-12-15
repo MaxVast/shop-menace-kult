@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  php-fpm:
+    depends_on:
+      - database
+    build:
+      args:
+        APP_ENV: dev
+    volumes:
+      - ./:/var/www/
+      - ./docker/php/conf.d/php.dev.ini:/usr/local/etc/php/conf.d/php.ini
+      # if you develop on Linux, you may use a bind-mounted host directory instead
+      # - ./var:/srv/var:rw
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      APP_DEBUG: ${APP_DEBUG:-1}
+      XDEBUG_MODE: ${XDEBUG_MODE:-off}
+      XDEBUG_CONFIG: >-
+        client_host=172.22.112.1
+        idekey=PHPSTORM
+      # This should correspond to the server declared in PHPStorm `Preferences | Languages & Frameworks | PHP | Servers`
+      # Then PHPStorm will use the corresponding path mappings
+      PHP_IDE_CONFIG: serverName=local.symfo7.fr
+
+  build-php:
+    image: ghcr.io/maxvast/build-php8.4:latest
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+    volumes:
+      - ./:/app/
+
+  nginx:
+    volumes:
+      - ./public:/var/www/public
+      - ./docker/nginx/conf/nginx.conf.template:/etc/nginx/templates/nginx.conf
+      - ./docker/nginx/conf/project.conf.template:/etc/nginx/templates/project.conf.template
+
+  database:
+    image: mysql:5.7.34
+    init: true
+    environment:
+      - MYSQL_DATABASE=symfo7
+      - MYSQL_USER=csymfo7
+      - MYSQL_PASSWORD=symfo7
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - db_mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+
+volumes:
+  db_mysql:
