@@ -1,17 +1,106 @@
+{# templates/base.html.twig #}
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dark Menace Kult – Grimdark Miniatures | {% endblock %}</title>
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Grimdark miniatures, resin prints and signature painting by LMM Painting.">
+
+    {# Tailwind CDN – Ok for MVP #}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0b0b0b',
+                        surface: '#121212',
+                        accent: '#8b0000',
+                        bone: '#d6d1c4'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: radial-gradient(circle at top, #111 0%, #000 60%);
+        }
+    </style>
+
+    {% block structured_data %}
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "Person",
+                "name": "Lamaxmenace",
+                "alternateName": "The Dark Menace Kult",
+                "jobTitle": "Grimdark Miniature Artist",
+                "url": "https://darkmenacekult.com",
+                "sameAs": [
+                    "https://instagram.com/lamaxmenace",
+                    "https://www.tiktok.com/@lamaxmenace",
+                    "https://www.youtube.com/@lamaxmenace"
+                ]
+            }
+        </script>
+    {% endblock %}
+
+    {% block stylesheets %}{% endblock %}
+</head>
+
+<body class="text-bone font-serif tracking-wide">
+
+<!-- HEADER -->
+<header class="border-b border-white/10 bg-black/70 backdrop-blur">
+    <div class="max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">
+        <a href="/" class="text-xl uppercase tracking-widest font-bold">
+            The Dark Menace kult
+        </a>
+        <nav class="flex items-center space-x-6 text-sm uppercase">
+            <a href="/gallery" class="hover:text-accent transition">Galerie</a>
+            <a href="/order" class="hover:text-accent transition">Commander</a>
+
+            <!-- Icons -->
+            <a href="/cart" class="hover:text-accent transition" title="Panier">
+                🛒
+            </a>
+            <a href="/login" class="hover:text-accent transition" title="Connexion">
+                👤
+            </a>
+        </nav>
+    </div>
+</header>
+
+<!-- MAIN -->
+<main class="min-h-screen">
+    {% block body %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/10 mt-24 bg-black/80">
+    <div class="max-w-6xl mx-auto px-6 py-10 text-sm text-white/50">
+        <div class="flex flex-col md:flex-row justify-between gap-6">
+            <div>
+                <p class="uppercase tracking-widest text-white">LMM Painting</p>
+                <p class="mt-2">Grimdark miniatures & resin prints</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="https://www.instagram.com/lamaxmenace/" target="_blank" class="hover:text-accent" title="Instagram">📸</a>
+                <a href="https://www.tiktok.com/@lamaxmenace" target="_blank" class="hover:text-accent" title="TikTok">🎥</a>
+                <a href="https://www.youtube.com/@lamaxmenacepainting" target="_blank" class="hover:text-accent" title="YouTube">▶️</a>
+                <span class="mx-2 text-white/20">|</span>
+                <a href="/legal/mentions" class="hover:text-white">Mentions légales</a>
+                <a href="/legal/cgv" class="hover:text-white">CGV</a>
+            </div>
+        </div>
+        <p class="mt-6 text-xs">© {{ "now"|date("Y") }} – All pieces are handmade & unique.</p>
+    </div>
+</footer>
+
+{% block javascripts %}{% endblock %}
+</body>
 </html>
