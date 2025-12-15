@@ -2,10 +2,10 @@
 
 namespace App\Entity\Media;
 
-use App\Entity\Products;
+use App\Entity\Product\Products;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ProductsImage extends MediaObject
 {

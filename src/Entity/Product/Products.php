@@ -1,26 +1,29 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Product;
 
 use App\Entity\Media\ProductsImage;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Uid\Uuid;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Products {
+
+    public const array STATUSES = ['draft', 'published', 'archived'];
 
     #[ORM\Id, ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?Uuid $id = null;
 
-    #[ORM\Column(length: 64)]
-    #[Assert\NotBlank, Assert\Length(max: 64)]
+    #[ORM\Column(length: 65)]
+    #[Assert\NotBlank, Assert\Length(max: 65)]
     private string $name;
 
     #[Gedmo\Slug(fields: ['name'])]
@@ -31,19 +34,25 @@ class Products {
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    #[ORM\ManyToOne(targetEntity: Category::class, cascade:['persist'], fetch:'LAZY', inversedBy:'products',)]
-    private ?Category $category;
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Category $category = null;
 
     #[ORM\OneToMany(targetEntity: ProductsImage::class, mappedBy: 'products', cascade: ['remove', 'persist'], orphanRemoval: true)]
     #[Assert\Count(min: 1)]
-    public iterable $images;
+    public Collection $images;
 
-    #[ORM\Column(type: 'float')]
-    private float $price;
+    #[ORM\Column(type: 'integer')]
+    private int $price;
 
     #[ORM\Column(type: 'int', nullable: true)]
     private ?int $stock = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $printOnDemand = true;
+
+    #[ORM\Column(type: 'smallint', nullable: true)]
+    private ?int $productionDelayDays = null;
 
     #[ORM\Column(length: 80, nullable: true)]
     #[Assert\Length(max: 80)]
@@ -57,11 +66,9 @@ class Products {
     #[Assert\Length(max: 80)]
     private ?string $license_type = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    public bool $isDraft = true;
-
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    public bool $active = false;
+    #[ORM\Column]
+    #[Assert\NotBlank, Assert\Choice(Products::STATUSES)]
+    private string $status;
 
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $createdAt;
@@ -71,7 +78,7 @@ class Products {
 
     public function __construct()
     {
-        $createdAt = new \DateTime();
+        $this->createdAt = new \DateTime();
         $this->images = new ArrayCollection();
     }
 
@@ -153,17 +160,17 @@ class Products {
     }
 
     /**
-     * @return float
+     * @return int
      */
-    public function getPrice(): float
+    public function getPrice(): int
     {
         return $this->price;
     }
 
     /**
-     * @param float $price
+     * @param int $price
      */
-    public function setPrice(float $price): void
+    public function setPrice(int $price): void
     {
         $this->price = $price;
     }
@@ -182,6 +189,38 @@ class Products {
     public function setStock(?int $stock): void
     {
         $this->stock = $stock;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrintOnDemand(): bool
+    {
+        return $this->printOnDemand;
+    }
+
+    /**
+     * @param bool $printOnDemand
+     */
+    public function setPrintOnDemand(bool $printOnDemand): void
+    {
+        $this->printOnDemand = $printOnDemand;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getProductionDelayDays(): ?int
+    {
+        return $this->productionDelayDays;
+    }
+
+    /**
+     * @param int|null $productionDelayDays
+     */
+    public function setProductionDelayDays(?int $productionDelayDays): void
+    {
+        $this->productionDelayDays = $productionDelayDays;
     }
 
     /**
@@ -233,35 +272,19 @@ class Products {
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isDraft(): bool
+    public function getStatus(): ?string
     {
-        return $this->isDraft;
+        return $this->status;
     }
 
     /**
-     * @param bool $isDraft
+     * @param string $status
      */
-    public function setIsDraft(bool $isDraft): void
+    public function setStatus(string $status): void
     {
-        $this->isDraft = $isDraft;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isActive(): bool
-    {
-        return $this->active;
-    }
-
-    /**
-     * @param bool $active
-     */
-    public function setActive(bool $active): void
-    {
-        $this->active = $active;
+        $this->status = $status;
     }
 
     /**
