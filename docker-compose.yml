@@ -23,7 +23,7 @@ services:
       FPM_ENTRYPOINT: index
       PHP_FPM_CONTAINER: php-fpm
       NGINX_PROJECT: local
-      NGINX_HOST: symfo7.fr
+      NGINX_HOST: shop-menace-kult.fr
       NGINX_ROOT_DIR: public
     ports:
       # HTTP
