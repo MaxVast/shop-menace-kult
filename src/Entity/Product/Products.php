@@ -36,8 +36,9 @@ class Products {
 
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'products')]
     #[ORM\JoinTable(name: 'products_categories')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Collection $categories = null;
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'category_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Collection $categories;
 
     #[ORM\OneToMany(targetEntity: ProductsImage::class, mappedBy: 'products', cascade: ['remove', 'persist'], orphanRemoval: true)]
     #[Assert\Count(min: 1, max: 10)]
