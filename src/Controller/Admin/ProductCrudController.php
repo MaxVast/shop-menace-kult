@@ -54,9 +54,13 @@ class ProductCrudController extends AbstractCrudController
             TextEditorField::new('description', 'Description')
                 ->hideOnIndex(),
 
-            AssociationField::new('category', 'Catégorie')
+            AssociationField::new('categories', 'Catégories')
+                ->setRequired(true)
+                ->setFormTypeOptions([
+                    'by_reference' => false,
+                ])
                 ->formatValue(function ($value, $entity) {
-                    return $entity->getCategory()?->getName() ?? '';
+                    return implode(', ', $entity->getCategories()->map(fn($c) => $c->getName())->toArray());
                 }),
 
             MoneyField::new('price', 'Prix impression')
@@ -78,6 +82,7 @@ class ProductCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             CollectionField::new('images', 'Images')
+                ->setRequired(true)
                 ->allowAdd()
                 ->allowDelete()
                 ->setEntryType(ProductsImageType::class)
@@ -128,10 +133,19 @@ class ProductCrudController extends AbstractCrudController
             return $this->redirect($this->generateUrl('admin_product_index'));
         }
 
-        return $this->render('admin/product/change_status.html.twig', [
+        return $this->render('admin/product/change-status.html.twig', [
             'form' => $form->createView(),
             'product' => $product,
         ]);
+    }
+
+    public function updateEntity(EntityManagerInterface $em, $entityInstance): void
+    {
+        if ($entityInstance instanceof Products) {
+            $entityInstance->setUpdatedAt(new \DateTimeImmutable());
+        }
+
+        parent::updateEntity($em, $entityInstance);
     }
 
 

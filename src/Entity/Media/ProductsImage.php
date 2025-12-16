@@ -23,9 +23,17 @@ class ProductsImage extends MediaObject
     /**
      * @param File|null $file
      */
-    public function setFile(?File $file): void
+    public function setFile(?File $file = null): void
     {
         $this->file = $file;
+
+        if ($file) {
+            $this->updatedAt = new \DateTimeImmutable();
+            $this->originalName = $file->getFilename();
+            $this->mimeType = $file->getMimeType();
+            $this->size = $file->getSize();
+            $this->dimensions = null;
+        }
     }
 
     /**
@@ -45,6 +53,8 @@ class ProductsImage extends MediaObject
     {
         $products->addImage($this);
         $this->products = $products;
+
+        $products->setUpdatedAt(new \DateTimeImmutable());
 
         return $this;
     }

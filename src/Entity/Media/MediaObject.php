@@ -5,9 +5,7 @@ namespace App\Entity\Media;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\MappedSuperclass]
@@ -47,6 +45,7 @@ abstract class MediaObject implements MediaObjectInterface
     public function __construct()
     {
         $this->id = Uuid::v6();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): Uuid

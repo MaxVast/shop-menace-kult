@@ -34,9 +34,10 @@ class Products {
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'products')]
+    #[ORM\JoinTable(name: 'products_categories')]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Category $category = null;
+    private ?Collection $categories = null;
 
     #[ORM\OneToMany(targetEntity: ProductsImage::class, mappedBy: 'products', cascade: ['remove', 'persist'], orphanRemoval: true)]
     #[Assert\Count(min: 1, max: 10)]
@@ -81,6 +82,7 @@ class Products {
     {
         $this->createdAt = new \DateTime();
         $this->images = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     /**
@@ -131,14 +133,26 @@ class Products {
         return $this->description;
     }
 
-    public function getCategory(): ?Category
+    public function getCategories(): Collection
     {
-        return $this->category;
+        return $this->categories;
     }
 
-    public function setCategory(?Category $category): void
+    public function addCategory(Category $category): self
     {
-        $this->category = $category;
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->addProduct($this);
+        }
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        if ($this->categories->removeElement($category)) {
+            $category->removeProduct($this);
+        }
+        return $this;
     }
 
     public function addImage(ProductsImage $image): self
