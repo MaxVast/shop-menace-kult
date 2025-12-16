@@ -6,7 +6,7 @@
     <title>{% block title %}Dark Menace Kult – Grimdark Miniatures | {% endblock %}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Grimdark miniatures, resin prints and signature painting by LMM Painting.">
+    <meta name="description" content="Grimdark miniatures, resin prints and signature painting by Lamaxmenace.">
 
     {# Tailwind CDN – Ok for MVP #}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -57,10 +57,11 @@
 <!-- HEADER -->
 <header class="border-b border-white/10 bg-black/70 backdrop-blur">
     <div class="max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">
-        <a href="/" class="text-xl uppercase tracking-widest font-bold">
+        <a href="{{ path('home') }}" class="text-xl uppercase tracking-widest font-bold">
             The Dark Menace kult
         </a>
         <nav class="flex items-center space-x-6 text-sm uppercase">
+            <a href="{{ path('product_index') }}" class="hover:text-accent transition">Boutique</a>
             <a href="/gallery" class="hover:text-accent transition">Galerie</a>
             <a href="/order" class="hover:text-accent transition">Commander</a>
 

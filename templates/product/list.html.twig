@@ -1,0 +1,107 @@
+{# templates/product/list.html.twig #}
+{% extends 'base.html.twig' %}
+{% block structured_data %}
+    {{ parent() }}
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "Boutique – Dark Menace Kult",
+            "itemListElement": [
+            {% for product in products %}
+                {
+                "@type": "ListItem",
+                "position": {{ loop.index }},
+                "url": "{{ absolute_url(path('product_show', {slug: product.slug})) }}",
+                "name": "{{ product.name }}"
+                }{% if not loop.last %},{% endif %}
+                        {% endfor %}
+            ]
+        }
+    </script>
+{% endblock %}
+
+
+{% block body %}
+    <section class="max-w-6xl mx-auto px-6 py-16">
+
+
+        <!-- HERO -->
+        <header class="mb-14 text-center">
+            <h1 class="text-3xl md:text-4xl uppercase tracking-widest mb-4">
+                Boutique
+            </h1>
+            <p class="text-white/60 max-w-2xl mx-auto">
+                Figurines grimdark imprimées en résine, avec ou sans peinture signature.<br/>
+                Chaque pièce est produite à la demande dans l’atelier de Lamaxmenace.
+            </p>
+        </header>
+
+
+        <!-- GRID PRODUITS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+
+
+            {% for product in products %}
+                <article class="group bg-surface border border-white/10 rounded-sm overflow-hidden hover:border-accent transition">
+
+
+                    <!-- IMAGE -->
+                    <a href="{{ path('product_show', {slug: product.slug}) }}" class="block overflow-hidden">
+                        {% if product.images|length > 0 %}
+                            <img
+                                src="{{ asset('uploads/products/' ~ product.images|first.name) }}"
+                                alt="{{ product.name }} – figurine grimdark imprimée en résine"
+                                loading="lazy"
+                                class="w-full h-72 object-cover group-hover:scale-105 transition duration-500"
+                            >
+                        {% else %}
+                            <div class="w-full h-72 bg-black flex items-center justify-center text-white/20">
+                                No image
+                            </div>
+                        {% endif %}
+                    </a>
+
+
+                    <!-- CONTENU -->
+                    <div class="p-6">
+                        <h2 class="text-lg uppercase tracking-wide mb-2">
+                            <a href="{{ path('product_show', {slug: product.slug}) }}" class="hover:text-accent">
+                                {{ product.name }}
+                            </a>
+                        </h2>
+
+
+                        <p class="text-sm text-white/50 mb-4">
+                            {{ product.description|striptags|slice(0, 90) }}...
+                        </p>
+
+
+                        <div class="flex items-center justify-between">
+<span class="text-accent font-semibold">
+{{ (product.price / 100)|number_format(2, ',', ' ') }} €
+</span>
+
+
+                            {% if product.stock is not null and product.stock == 0 %}
+                                <span class="text-xs text-white/40">À imprimer</span>
+                            {% else %}
+                                <span class="text-xs text-white/40">Disponible</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+                </article>
+            {% else %}
+                <p class="text-center text-white/50 col-span-full">
+                    Aucun produit disponible pour le moment.
+                </p>
+            {% endfor %}
+
+
+        </div>
+
+
+    </section>
+{% endblock %}

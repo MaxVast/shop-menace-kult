@@ -67,10 +67,17 @@ class ProductCrudController extends AbstractCrudController
                 ->setCurrency('EUR')
                 ->setStoredAsCents(),
 
+            IntegerField::new('discount', 'Remise')
+                ->setHelp('Laisser vide si pour appliquer aucune remise'),
+
             IntegerField::new('stock', 'Stock')
                 ->setHelp('Laisser vide si impression à la demande'),
 
+            BooleanField::new('lot', 'Produit en lot'),
+
             BooleanField::new('printOnDemand', 'Impression à la demande'),
+
+            BooleanField::new('paintingOnDemand', 'Peinture à la demande'),
 
             TextField::new('license_name', 'Licence – Nom')
                 ->hideOnIndex(),
@@ -147,6 +154,17 @@ class ProductCrudController extends AbstractCrudController
 
         parent::updateEntity($em, $entityInstance);
     }
+
+    public function persistEntity(EntityManagerInterface $em, $entityInstance): void
+    {
+        try {
+            parent::persistEntity($em, $entityInstance);
+        } catch (\Throwable $e) {
+            dump($e->getMessage(), $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
 
 
 }

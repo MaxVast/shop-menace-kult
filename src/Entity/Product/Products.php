@@ -48,10 +48,19 @@ class Products {
     private int $price;
 
     #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $discount = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $stock = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $lot = true;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $printOnDemand = true;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $paintingOnDemand = true;
 
     #[ORM\Column(type: 'smallint', nullable: true)]
     private ?int $productionDelayDays = null;
@@ -194,6 +203,22 @@ class Products {
     /**
      * @return int|null
      */
+    public function getDiscount(): ?int
+    {
+        return $this->discount;
+    }
+
+    /**
+     * @param int|null $discount
+     */
+    public function setDiscount(?int $discount): void
+    {
+        $this->discount = $discount;
+    }
+
+    /**
+     * @return int|null
+     */
     public function getStock(): ?int
     {
         return $this->stock;
@@ -210,6 +235,22 @@ class Products {
     /**
      * @return bool
      */
+    public function isLot(): bool
+    {
+        return $this->lot;
+    }
+
+    /**
+     * @param bool $lot
+     */
+    public function setLot(bool $lot): void
+    {
+        $this->lot = $lot;
+    }
+
+    /**
+     * @return bool
+     */
     public function isPrintOnDemand(): bool
     {
         return $this->printOnDemand;
@@ -221,6 +262,20 @@ class Products {
     public function setPrintOnDemand(bool $printOnDemand): void
     {
         $this->printOnDemand = $printOnDemand;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPaintingOnDemand(): bool
+    {
+        return $this->paintingOnDemand;
+    }
+
+    public function setPaintingOnDemand(bool $paintingOnDemand): self
+    {
+        $this->paintingOnDemand = $paintingOnDemand;
+        return $this;
     }
 
     /**
