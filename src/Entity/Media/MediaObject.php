@@ -5,11 +5,10 @@ namespace App\Entity\Media;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
 
+#[ORM\MappedSuperclass]
 abstract class MediaObject implements MediaObjectInterface
 {
     #[ORM\Id, ORM\Column(type: 'uuid', unique: true)]
@@ -17,38 +16,36 @@ abstract class MediaObject implements MediaObjectInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private Uuid $id;
 
-    #[ORM\Column(type: 'string')]
-    public ?string $name;
+    #[ORM\Column(type: 'string', nullable: true)]
+    public ?string $name = null;
 
-    #[ORM\Column(type: 'string')]
-    public ?string $originalName;
+    #[ORM\Column(type: 'string', nullable: true)]
+    public ?string $originalName= null;
 
-    #[ORM\Column(type: 'string')]
-    public ?string $mimeType;
+    #[ORM\Column(type: 'string', nullable: true)]
+    public ?string $mimeType= null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     public ?string $tag = null;
 
-    #[ORM\Column(type: 'integer')]
-    public ?int $size;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    public ?int $size= null;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    public ?array $dimensions;
-
-    #[Assert\NotNull]
-    public ?File $file;
+    public ?array $dimensions= null;
 
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: 'datetime', nullable: true)]
-    public ?\DateTimeInterface $createdAt;
+    public ?\DateTimeInterface $createdAt= null;
 
     #[Gedmo\Timestampable(on: 'update')]
     #[ORM\Column(type: 'datetime', nullable: true)]
-    public ?\DateTimeInterface $updatedAt;
+    public ?\DateTimeInterface $updatedAt= null;
 
     public function __construct()
     {
         $this->id = Uuid::v6();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): Uuid

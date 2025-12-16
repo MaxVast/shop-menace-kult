@@ -34,18 +34,20 @@ class Products {
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Category $category = null;
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'products')]
+    #[ORM\JoinTable(name: 'products_categories')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'category_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Collection $categories;
 
     #[ORM\OneToMany(targetEntity: ProductsImage::class, mappedBy: 'products', cascade: ['remove', 'persist'], orphanRemoval: true)]
-    #[Assert\Count(min: 1)]
+    #[Assert\Count(min: 1, max: 10)]
     public Collection $images;
 
     #[ORM\Column(type: 'integer')]
     private int $price;
 
-    #[ORM\Column(type: 'int', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $stock = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
@@ -68,18 +70,20 @@ class Products {
 
     #[ORM\Column]
     #[Assert\NotBlank, Assert\Choice(Products::STATUSES)]
-    private string $status;
+    private string $status = 'draft';
 
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Gedmo\Timestampable(on: 'update')]
     private ?\DateTimeInterface  $updatedAt = null;
 
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->images = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     /**
@@ -130,14 +134,26 @@ class Products {
         return $this->description;
     }
 
-    public function getCategory(): ?Category
+    public function getCategories(): Collection
     {
-        return $this->category;
+        return $this->categories;
     }
 
-    public function setCategory(?Category $category): void
+    public function addCategory(Category $category): self
     {
-        $this->category = $category;
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->addProduct($this);
+        }
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        if ($this->categories->removeElement($category)) {
+            $category->removeProduct($this);
+        }
+        return $this;
     }
 
     public function addImage(ProductsImage $image): self
