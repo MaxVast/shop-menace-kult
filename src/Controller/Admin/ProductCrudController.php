@@ -25,6 +25,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 
 class ProductCrudController extends AbstractCrudController
 {
@@ -67,10 +68,25 @@ class ProductCrudController extends AbstractCrudController
                 ->setCurrency('EUR')
                 ->setStoredAsCents(),
 
+            NumberField::new('discount', 'Remise (%)')
+                ->setHelp('Pourcentage de remise (ex : 5 pour 5 %)')
+                ->setRequired(false)
+                ->setFormTypeOption('html5', true)
+                ->setFormTypeOption('scale', 0)
+                ->setFormTypeOption('attr', [
+                    'min' => 0,
+                    'max' => 100,
+                    'step' => 1,
+                ]),
+
             IntegerField::new('stock', 'Stock')
                 ->setHelp('Laisser vide si impression à la demande'),
 
+            BooleanField::new('lot', 'Produit en lot'),
+
             BooleanField::new('printOnDemand', 'Impression à la demande'),
+
+            BooleanField::new('paintingOnDemand', 'Peinture à la demande'),
 
             TextField::new('license_name', 'Licence – Nom')
                 ->hideOnIndex(),
@@ -82,10 +98,14 @@ class ProductCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             CollectionField::new('images', 'Images')
-                ->setRequired(true)
+                ->setRequired($pageName !== Crud::PAGE_EDIT)
+                ->setFormTypeOptions($pageName == Crud::PAGE_EDIT ? ['allow_delete' => false] : [])
                 ->allowAdd()
                 ->allowDelete()
                 ->setEntryType(ProductsImageType::class)
+                ->setFormTypeOptions([
+                    'by_reference' => false,
+                ])
                 ->onlyOnForms(),
 
 
@@ -148,5 +168,13 @@ class ProductCrudController extends AbstractCrudController
         parent::updateEntity($em, $entityInstance);
     }
 
-
+    public function persistEntity(EntityManagerInterface $em, $entityInstance): void
+    {
+        try {
+            parent::persistEntity($em, $entityInstance);
+        } catch (\Throwable $e) {
+            dump($e->getMessage(), $e->getTraceAsString());
+            throw $e;
+        }
+    }
 }

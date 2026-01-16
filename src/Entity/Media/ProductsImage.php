@@ -16,9 +16,9 @@ class ProductsImage extends MediaObject
     #[ORM\ManyToOne(targetEntity: Products::class, inversedBy: 'images')]
     protected ?Products $products = null;
 
-    #[Assert\NotNull, Assert\File(maxSize: '2M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'])]
+    #[Assert\File(maxSize: '2M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'])]
     #[Vich\UploadableField(mapping: 'product_images', fileNameProperty: 'name')]
-    public ?File $file;
+    public ?File $file = null;
 
     /**
      * @param File|null $file
