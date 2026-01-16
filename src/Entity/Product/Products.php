@@ -48,6 +48,7 @@ class Products {
     private int $price;
 
     #[ORM\Column(type: 'integer', nullable: true)]
+    #[Assert\PositiveOrZero]
     private ?int $discount = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -165,6 +166,14 @@ class Products {
         return $this;
     }
 
+    /**
+     * @return Collection
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
     public function addImage(ProductsImage $image): self
     {
         if (!$this->images->contains($image)) {
@@ -213,7 +222,7 @@ class Products {
      */
     public function setDiscount(?int $discount): void
     {
-        $this->discount = $discount;
+        $this->discount = $discount !== null ? (int) $discount : null;
     }
 
     /**
