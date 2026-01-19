@@ -1,13 +1,19 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\User;
 
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Symfony\Component\Uid\Uuid;
+use App\Entity\Traits\TimestampableEntityTrait;
+use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class User {
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: 'users')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface {
 
     #[ORM\Id, ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -23,84 +29,47 @@ class User {
     private string $email;
 
     #[ORM\Column(type:'json')]
-    #[Assert\NotBlank]
-    private array $roles = [];
+    private array $roles = ['ROLE_USER'];
 
     #[ORM\Column(type:'string')]
     #[Assert\NotBlank]
     private string $password;
 
-    #[ORM\Column(type: 'datetime')]
-    #[Assert\NotBlank]
-    private \DateTimeInterface $createdAt;
+    #[ORM\Embedded(class: Address::class)]
+    private Address $address;
 
-    #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface  $updatedAt = null;
+    use TimestampableEntityTrait;
 
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+        $this->address = new Address();
     }
 
-    /**
-     * @return Uuid|null
-     */
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
+    public function getId(): ?Uuid { return $this->id;}
 
-    /**
-     * @return string
-     */
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
+    public function getUsername(): string { return $this->username; }
 
-    /**
-     * @param string $username
-     */
     public function setUsername(string $username): void
     {
         $this->username = $username;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
+    public function getEmail(): string { return $this->email; }
 
-    /**
-     * @param string $email
-     */
     public function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    /**
-     * @return string
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
+    public function getPassword(): string { return $this->password; }
 
-    /**
-     * @param string $password
-     */
     public function setPassword(string $password): void
     {
         $this->password = $password;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -117,27 +86,18 @@ class User {
         return $this;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getCreatedAt(): \DateTimeInterface
-    {
-        return $this->createdAt;
-    }
+    public function getCreatedAt(): \DateTimeInterface { return $this->createdAt; }
 
-    /**
-     * @return \DateTimeInterface|null
-     */
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
+    public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
 
-    /**
-     * @param \DateTimeInterface|null $updatedAt
-     */
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }
+
+    public function getAddress(): Address { return $this->address; }
+
+    public function eraseCredentials(): void {}
+
+    public function getUserIdentifier(): string { return $this->username; }
 }

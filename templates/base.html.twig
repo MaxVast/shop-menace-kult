@@ -69,9 +69,20 @@
             <a href="/cart" class="hover:text-accent transition" title="Panier">
                 🛒
             </a>
-            <a href="/login" class="hover:text-accent transition" title="Connexion">
-                👤
-            </a>
+            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <a href="#" class="hover:text-accent transition" title="Compte">
+                    👤
+                </a>
+            {% endif %}
+            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <a href="{{ path('logout') }}" class="hover:text-accent transition" title="Déconnexion">
+                    ➜]
+                </a>
+            {% else %}
+                <a href="{{ path('login') }}" class="hover:text-accent transition" title="Connexion">
+                    Connexion
+                </a>
+            {% endif %}
         </nav>
     </div>
 </header>
