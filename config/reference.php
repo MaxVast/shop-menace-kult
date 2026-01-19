@@ -643,7 +643,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         }>,
  *     },
  *     uid?: bool|array{ // Uid configuration
- *         enabled?: bool, // Default: false
+ *         enabled?: bool, // Default: true
  *         default_uuid_version?: 7|6|4|1, // Default: 7
  *         name_based_uuid_version?: 5|3, // Default: 5
  *         name_based_uuid_namespace?: scalar|null,
@@ -1008,7 +1008,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         enabled?: bool, // Default: false
  *     },
  *     html?: bool|array{
- *         enabled?: bool, // Default: false
+ *         enabled?: bool, // Default: true
  *     },
  *     markdown?: bool|array{
  *         enabled?: bool, // Default: false
@@ -1534,6 +1534,107 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     generate_final_classes?: bool, // Default: true
  *     generate_final_entities?: bool, // Default: false
  * }
+ * @psalm-type StofDoctrineExtensionsConfig = array{
+ *     orm?: array<string, array{ // Default: []
+ *         translatable?: scalar|null, // Default: false
+ *         timestampable?: scalar|null, // Default: false
+ *         blameable?: scalar|null, // Default: false
+ *         sluggable?: scalar|null, // Default: false
+ *         tree?: scalar|null, // Default: false
+ *         loggable?: scalar|null, // Default: false
+ *         ip_traceable?: scalar|null, // Default: false
+ *         sortable?: scalar|null, // Default: false
+ *         softdeleteable?: scalar|null, // Default: false
+ *         uploadable?: scalar|null, // Default: false
+ *         reference_integrity?: scalar|null, // Default: false
+ *     }>,
+ *     mongodb?: array<string, array{ // Default: []
+ *         translatable?: scalar|null, // Default: false
+ *         timestampable?: scalar|null, // Default: false
+ *         blameable?: scalar|null, // Default: false
+ *         sluggable?: scalar|null, // Default: false
+ *         tree?: scalar|null, // Default: false
+ *         loggable?: scalar|null, // Default: false
+ *         ip_traceable?: scalar|null, // Default: false
+ *         sortable?: scalar|null, // Default: false
+ *         softdeleteable?: scalar|null, // Default: false
+ *         uploadable?: scalar|null, // Default: false
+ *         reference_integrity?: scalar|null, // Default: false
+ *     }>,
+ *     class?: array{
+ *         translatable?: scalar|null, // Default: "Gedmo\\Translatable\\TranslatableListener"
+ *         timestampable?: scalar|null, // Default: "Gedmo\\Timestampable\\TimestampableListener"
+ *         blameable?: scalar|null, // Default: "Gedmo\\Blameable\\BlameableListener"
+ *         sluggable?: scalar|null, // Default: "Gedmo\\Sluggable\\SluggableListener"
+ *         tree?: scalar|null, // Default: "Gedmo\\Tree\\TreeListener"
+ *         loggable?: scalar|null, // Default: "Gedmo\\Loggable\\LoggableListener"
+ *         sortable?: scalar|null, // Default: "Gedmo\\Sortable\\SortableListener"
+ *         softdeleteable?: scalar|null, // Default: "Gedmo\\SoftDeleteable\\SoftDeleteableListener"
+ *         uploadable?: scalar|null, // Default: "Gedmo\\Uploadable\\UploadableListener"
+ *         reference_integrity?: scalar|null, // Default: "Gedmo\\ReferenceIntegrity\\ReferenceIntegrityListener"
+ *     },
+ *     softdeleteable?: array{
+ *         handle_post_flush_event?: bool, // Default: false
+ *     },
+ *     uploadable?: array{
+ *         default_file_path?: scalar|null, // Default: null
+ *         mime_type_guesser_class?: scalar|null, // Default: "Stof\\DoctrineExtensionsBundle\\Uploadable\\MimeTypeGuesserAdapter"
+ *         default_file_info_class?: scalar|null, // Default: "Stof\\DoctrineExtensionsBundle\\Uploadable\\UploadedFileInfo"
+ *         validate_writable_directory?: bool, // Default: true
+ *     },
+ *     default_locale?: scalar|null, // Default: "en"
+ *     translation_fallback?: bool, // Default: false
+ *     persist_default_translation?: bool, // Default: false
+ *     skip_translation_on_load?: bool, // Default: false
+ *     metadata_cache_pool?: scalar|null, // Default: null
+ * }
+ * @psalm-type TwigComponentConfig = array{
+ *     defaults?: array<string, string|array{ // Default: ["__deprecated__use_old_naming_behavior"]
+ *         template_directory?: scalar|null, // Default: "components"
+ *         name_prefix?: scalar|null, // Default: ""
+ *     }>,
+ *     anonymous_template_directory?: scalar|null, // Defaults to `components`
+ *     profiler?: bool, // Enables the profiler for Twig Component (in debug mode) // Default: "%kernel.debug%"
+ *     controllers_json?: scalar|null, // Deprecated: The "twig_component.controllers_json" config option is deprecated, and will be removed in 3.0. // Default: null
+ * }
+ * @psalm-type VichUploaderConfig = array{
+ *     default_filename_attribute_suffix?: scalar|null, // Default: "_name"
+ *     db_driver: scalar|null,
+ *     storage?: scalar|null, // Default: "file_system"
+ *     use_flysystem_to_resolve_uri?: bool, // Default: false
+ *     twig?: scalar|null, // twig requires templating // Default: true
+ *     form?: scalar|null, // Default: true
+ *     metadata?: array{
+ *         cache?: scalar|null, // Default: "file"
+ *         type?: scalar|null, // Default: "attribute"
+ *         file_cache?: array{
+ *             dir?: scalar|null, // Default: "%kernel.cache_dir%/vich_uploader"
+ *         },
+ *         auto_detection?: bool, // Default: true
+ *         directories?: list<array{ // Default: []
+ *             path: scalar|null,
+ *             namespace_prefix?: scalar|null, // Default: ""
+ *         }>,
+ *     },
+ *     mappings?: array<string, array{ // Default: []
+ *         uri_prefix?: scalar|null, // Default: "/uploads"
+ *         upload_destination?: scalar|null, // Default: null
+ *         namer?: string|array{
+ *             service?: scalar|null, // Default: null
+ *             options?: mixed, // Default: null
+ *         },
+ *         directory_namer?: string|array{
+ *             service?: scalar|null, // Default: null
+ *             options?: mixed, // Default: null
+ *         },
+ *         delete_on_remove?: scalar|null, // Default: true
+ *         erase_fields?: scalar|null, // Default: true
+ *         delete_on_update?: scalar|null, // Default: true
+ *         inject_on_load?: scalar|null, // Default: false
+ *         namer_keep_extension?: scalar|null, // Default: false
+ *         db_driver?: scalar|null, // Default: null
+ *     }>,
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1547,6 +1648,9 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     twig_extra?: TwigExtraConfig,
  *     security?: SecurityConfig,
  *     monolog?: MonologConfig,
+ *     stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
+ *     twig_component?: TwigComponentConfig,
+ *     vich_uploader?: VichUploaderConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1563,6 +1667,9 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
  *         maker?: MakerConfig,
+ *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
+ *         twig_component?: TwigComponentConfig,
+ *         vich_uploader?: VichUploaderConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1577,6 +1684,9 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
+ *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
+ *         twig_component?: TwigComponentConfig,
+ *         vich_uploader?: VichUploaderConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1592,6 +1702,9 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
+ *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
+ *         twig_component?: TwigComponentConfig,
+ *         vich_uploader?: VichUploaderConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

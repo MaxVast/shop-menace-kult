@@ -1,0 +1,159 @@
+{# templates/product/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} – The Dark Menace Kult{% endblock %}
+
+{% block meta_description %}
+    {{ product.description|striptags|slice(0, 160) }}
+{% endblock %}
+
+{% block body %}
+    <!-- FIL ARIANNE -->
+    <section class="max-w-6xl mx-auto px-6 py-16">
+        <p class="text-white/60 mx-auto">
+            > <a href="{{ path('home')}}">Home</a> / <a href="{{ path('product_index')}}">Boutique</a>
+        </p>
+    </section>
+    <section class="max-w-6xl mx-auto px-6 py-16">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+
+            {# ===== GALERIE ===== #}
+            <div>
+                {% set firstImage = product.images|first %}
+
+                <!-- IMAGE PRINCIPALE -->
+                <div class="border border-white/10 bg-black mb-4">
+                    {% if firstImage %}
+                        <img
+                            id="mainImage"
+                            src="{{ asset('uploads/products/' ~ firstImage.name) }}"
+                            alt="{{ product.name }} grimdark miniature"
+                            class="w-full h-[420px] object-cover"
+                        >
+                    {% else %}
+                        <div class="w-full h-[420px] flex items-center justify-center text-white/30">
+                            No image
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- VIGNETTES -->
+                {% if product.images|length > 1 %}
+                    <div class="flex gap-3">
+                        {% for image in product.images %}
+                            <button
+                                type="button"
+                                onclick="document.getElementById('mainImage').src='{{ asset('uploads/products/' ~ image.name) }}'"
+                                class="border border-white/10 hover:border-accent transition"
+                            >
+                                <img
+                                    src="{{ asset('uploads/products/' ~ image.name) }}"
+                                    alt="{{ product.name }} thumbnail"
+                                    class="w-20 h-20 object-cover"
+                                >
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {# ===== INFOS PRODUIT ===== #}
+            <div>
+
+                <h1 class="text-3xl uppercase tracking-widest mb-4">
+                    {{ product.name }}
+                </h1>
+
+                {% if product.discount is not null and product.discount > 0 %}
+                    <div class="flex items-center gap-4 mb-4">
+                        {# Badge réduction #}
+                        <span class="bg-red-900 text-white text-sm font-bold px-3 py-1 rounded-full"> -{{ product.discount }} %</span>
+
+                        <div class="flex flex-col">
+                            {# Prix réduit #}
+                            <span class="text-accent text-3xl font-extrabold leading-none">
+                                {{ ((product.price * (1 - product.discount / 100)) / 100) | number_format(2, ',', ' ') }} €
+                            </span>
+
+                            {# Prix initial barré #}
+                            <span class="text-gray-400 line-through text-sm">
+                                {{ (product.price / 100) | number_format(2, ',', ' ') }} €
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-accent text-3xl font-extrabold mb-4">
+                        {{ (product.price / 100) | number_format(2, ',', ' ') }} €
+                    </p>
+                {% endif %}
+
+                <!-- STOCK -->
+                <p class="text-sm text-white/60 mb-6">
+                    {% if product.stock is not null %}
+                        {% if product.stock > 0 %}
+                            Disponible : {{ product.stock }}
+                                {% if product.lot is true %}
+                                    {% if product.stock > 1 %}
+                                        lots
+                                    {% else %}
+                                       lot
+                                    {% endif %}
+                                {% else %}
+                                    {% if product.stock > 1 %}
+                                        pièces
+                                    {% else %}
+                                        pièce
+                                    {% endif %}
+                                {% endif %}<br/>
+                            En stock – expédition sous 3 à 5 jours
+                        {% else %}
+                            Impression à la demande
+                        {% endif %}
+                    {% else %}
+                        Impression à la demande
+                    {% endif %}
+                </p>
+
+                <!-- DESCRIPTION -->
+                <div class="prose prose-invert max-w-none mb-6 text-white/80">
+                    {{ product.description|raw }}
+                </div>
+
+                <!-- LICENCE -->
+                {% if product.licenseName %}
+                    <div class="border border-white/10 p-4 text-sm mb-6 bg-black/40">
+                        <strong class="uppercase tracking-wide">Licence commerciale</strong><br>
+                        {{ product.licenseName }}
+                        {% if product.licenseType %} – {{ product.licenseType }}{% endif %}
+                    </div>
+                {% endif %}
+
+                {#<!-- OPTIONS PEINTURE -->
+                {% if product.paintingOnDemand is defined and product.paintingOnDemand is is not null and product.paintingOnDemand == 0 %}if product.stock is not null and product.stock == 0
+                    <div class="mb-6">
+                        <p class="uppercase tracking-wide text-sm mb-2">Option peinture</p>
+                        {% for option in paintingOptions %}
+                            <label class="flex items-center gap-2 text-sm text-white/70 mb-1">
+                                <input type="radio" name="painting_option" value="{{ option.id }}">
+                                {{ option.name }}
+                                (+{{ (option.price / 100)|number_format(2, ',', ' ') }} €)
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% endif %}#}
+
+                <!-- CTA -->
+                <button class="w-full bg-accent hover:bg-red-900 transition text-white uppercase tracking-widest py-4 text-sm">
+                    Ajouter au panier
+                </button>
+
+                <p class="mt-6 text-xs text-white/40 italic">
+                    Imprimé et peint à la main par <strong>Lamaxmenace</strong>.
+                </p>
+
+            </div>
+        </div>
+
+    </section>
+{% endblock %}
