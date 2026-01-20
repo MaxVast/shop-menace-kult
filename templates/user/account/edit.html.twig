@@ -1,0 +1,52 @@
+{% extends 'user/account/layout.html.twig' %}
+
+{% block account_content %}
+    <h1 class="text-2xl uppercase tracking-widest mb-6">
+        Modifier mes informations
+    </h1>
+
+    {{ form_start(form, { attr: { class: 'space-y-6' } }) }}
+
+    {% for field in [
+        form.username,
+        form.email,
+        form.address.street,
+        form.address.postalCode,
+        form.address.city,
+        form.address.country
+    ] %}
+        <div>
+            {{ form_label(field, null, {
+                label_attr: { class: 'block text-sm text-gray-400 mb-1' }
+            }) }}
+            {{ form_widget(field, {
+                attr: {
+                    class: 'w-full bg-black border border-zinc-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-800'
+                }
+            }) }}
+            {{ form_errors(field) }}
+        </div>
+    {% endfor %}
+
+    <div class="border-t border-zinc-800 pt-6">
+        {{ form_label(form.password, null, {
+            label_attr: { class: 'block text-sm text-gray-400 mb-1' }
+        }) }}
+        {{ form_widget(form.password, {
+            attr: {
+                class: 'w-full bg-black border border-zinc-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-800'
+            }
+        }) }}
+        <p class="text-xs text-gray-500 mt-1">
+            {{ form_help(form.password) }}
+        </p>
+        {{ form_errors(form.password) }}
+    </div>
+
+    <button type="submit"
+            class="w-full bg-red-900 hover:bg-red-800 transition rounded py-2 font-semibold tracking-wide uppercase">
+        Sauvegarder
+    </button>
+
+    {{ form_end(form) }}
+{% endblock %}

@@ -99,5 +99,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
 
     public function eraseCredentials(): void {}
 
-    public function getUserIdentifier(): string { return $this->username; }
+    public function getUserIdentifier(): string { return $this->getEmail(); }
 }

@@ -70,7 +70,7 @@
                 🛒
             </a>
             {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                <a href="#" class="hover:text-accent transition" title="Compte">
+                <a href="{{ path('account_index') }}" class="hover:text-accent transition" title="Compte">
                     👤
                 </a>
             {% endif %}

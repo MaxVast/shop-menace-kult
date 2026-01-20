@@ -1,0 +1,28 @@
+<nav class="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow">
+    <p class="text-sm uppercase tracking-widest text-gray-400 mb-4">
+        Mon compte
+    </p>
+
+    <ul class="space-y-3 text-sm">
+        <li>
+            <a href="{{ path('account_index') }}"
+               class="block px-3 py-2 rounded hover:bg-red-900/30 transition">
+                👤 Informations
+            </a>
+        </li>
+
+        <li>
+            <a {#href="{{ path('account_orders') }}"#}
+               class="block px-3 py-2 rounded hover:bg-red-900/30 transition">
+                📦 Mes commandes
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ path('logout') }}" title="Déconnexion"
+               class="block px-3 py-2 rounded text-red-600 hover:bg-red-900/30 transition">
+                ⛧ Quitter le culte
+            </a>
+        </li>
+    </ul>
+</nav>
