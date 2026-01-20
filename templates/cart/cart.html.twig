@@ -1,0 +1,47 @@
+{# templates/cart/cart.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }}Panier{% endblock %}
+
+{% block body %}
+<!-- FIL ARIANNE -->
+<section class="max-w-6xl mx-auto px-6 py-4">
+    <p class="text-white/60 mx-auto">
+        > <a class="hover:text-accent transition" href="{{ path('home')}}">Home</a>
+    </p>
+</section>
+
+<section class="max-w-6xl mx-auto px-6 py-16">
+
+    <!-- HERO -->
+    <header class="mb-14 text-center">
+        <h1 class="text-3xl md:text-4xl uppercase tracking-widest mb-4">
+            Panier
+        </h1>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        {% for item in cart %}
+            <div class="border-b border-white/10 py-4">
+                <strong>{{ item.name }}</strong><br>
+
+                Quantité : {{ item.quantity }}<br>
+
+                Prix : {{ (item.price / 100) | number_format(2, ',', ' ') }} €
+
+                {% if item.paintingOption %}
+                    Option : {{ item.paintingOption.name }}
+                    (+{{ (item.paintingOption.price / 100)|number_format(2, ',', ' ') }} €)
+                {% endif %}
+            </div>
+        {% else %}
+            <p>Votre panier est vide</p>
+        {% endfor %}
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <p class="mt-6 text-xl">
+            Total : {{ (total / 100)|number_format(2, ',', ' ') }} €
+        </p>
+    </div>
+</section>
+{% endblock %}

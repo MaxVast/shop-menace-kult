@@ -61,31 +61,79 @@
             The Cult of the Dark Menace
         </a>
         <nav class="flex items-center space-x-6 text-sm uppercase">
-            <a href="{{ path('product_index') }}" class="hover:text-accent transition">Boutique</a>
-            <a href="/gallery" class="hover:text-accent transition">Galerie</a>
-            <a href="/order" class="hover:text-accent transition">Commander</a>
+
+            <!-- Desktop menu -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="{{ path('product_index') }}" class="hover:text-accent transition">Boutique</a>
+                <a href="/gallery" class="hover:text-accent transition">Galerie</a>
+                <a href="/order" class="hover:text-accent transition">Commander</a>
+            </div>
 
             <!-- Icons -->
-            <a href="/cart" class="hover:text-accent transition" title="Panier">
-                🛒
-            </a>
-            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                <a href="{{ path('account_index') }}" class="hover:text-accent transition" title="Compte">
-                    👤
+            <div class="flex items-center space-x-4">
+
+                {# Panier avec badge #}
+                <!-- Icons -->
+                <a href="{{ path('cart_index') }}" class="relative hover:text-accent transition" title="Panier">
+                    Panier
+                    {% set cartCount = cartService.getItemsCount() %}
+                    {% if cartCount > 0 %}
+                        <span class="absolute -top-2 -right-3 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            {{ cartCount }}
+                        </span>
+                    {% endif %}
                 </a>
-            {% endif %}
-            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                <a href="{{ path('logout') }}" class="hover:text-accent transition" title="Déconnexion">
-                    ➜]
-                </a>
-            {% else %}
-                <a href="{{ path('login') }}" class="hover:text-accent transition" title="Connexion">
-                    Connexion
-                </a>
-            {% endif %}
+
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    <a href="{{ path('account_index') }}"
+                       class="hidden md:inline-flex hover:text-accent transition"
+                       title="Compte">
+                        👤
+                    </a>
+
+                    <a href="{{ path('logout') }}"
+                       class="hidden md:inline-flex hover:text-accent transition"
+                       title="Déconnexion">
+                        ➜]
+                    </a>
+                {% else %}
+                    <a href="{{ path('login') }}"
+                       class="hidden md:inline-flex hover:text-accent transition"
+                       title="Connexion">
+                        Connexion
+                    </a>
+                {% endif %}
+
+
+                <!-- Burger (mobile) -->
+                <button
+                    class="md:hidden text-xl"
+                    onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"
+                >
+                    ☰
+                </button>
+            </div>
         </nav>
     </div>
 </header>
+
+<div id="mobile-menu" class="hidden md:hidden bg-black border-b border-white/10">
+    <div class="px-6 py-4 space-y-4 uppercase text-sm">
+        <a href="{{ path('product_index') }}" class="block hover:text-accent">Boutique</a>
+        <a href="/gallery" class="block hover:text-accent">Galerie</a>
+        <a href="/order" class="block hover:text-accent">Commander</a>
+
+        <hr class="border-white/10">
+
+        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+            <a href="{{ path('account_index') }}" class="block hover:text-accent">Mon compte</a>
+            <a href="{{ path('logout') }}" class="block hover:text-accent">Déconnexion</a>
+        {% else %}
+            <a href="{{ path('login') }}" class="block hover:text-accent">Connexion</a>
+        {% endif %}
+    </div>
+</div>
+
 
 <!-- MAIN -->
 <main class="min-h-screen">

@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Controller\Cart;
+
+use App\Service\Cart\CartService;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Routing\Attribute\Route;
+use Twig\Environment;
+
+#[AsController]
+#[Route('/cart', name: 'cart_index', methods: ['GET', 'POST'])]
+class CartIndexController {
+    public function __invoke(Environment $twig, CartService $cartService)
+    {
+        return new Response($twig->render('cart/cart.html.twig', [
+            'cart' => $cartService->getCart(),
+            'total' => $cartService->getTotal(),
+        ]), Response::HTTP_OK);
+    }
+}
