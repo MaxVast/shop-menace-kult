@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription – The Dark Menace Kult{% endblock %}
+
+{% block body %}
+    <section class="min-h-screen flex items-center justify-center bg-black text-gray-100 py-16">
+        <div class="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-xl p-8 shadow-xl">
+
+            <h1 class="text-3xl font-bold text-center mb-2 uppercase tracking-widest">
+                Rejoindre le culte
+            </h1>
+            <p class="text-center text-sm text-gray-400 mb-8">
+                Crée ton compte pour commander, suivre tes créations et rejoindre l’atelier.
+            </p>
+
+            {{ form_start(form, {
+                attr: { class: 'space-y-5' }
+            }) }}
+
+            {# USERNAME #}
+            <div>
+                {{ form_label(form.username, null, {
+                    label_attr: { class: 'block text-sm text-gray-400 mb-1' }
+                }) }}
+                {{ form_widget(form.username, {
+                    attr: {
+                        class: 'w-full bg-black border border-zinc-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-800'
+                    }
+                }) }}
+                {{ form_errors(form.username) }}
+            </div>
+
+            {# EMAIL #}
+            <div>
+                {{ form_label(form.email, null, {
+                    label_attr: { class: 'block text-sm text-gray-400 mb-1' }
+                }) }}
+                {{ form_widget(form.email, {
+                    attr: {
+                        class: 'w-full bg-black border border-zinc-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-800'
+                    }
+                }) }}
+                {{ form_errors(form.email) }}
+            </div>
+
+            {# PASSWORD #}
+            <div>
+                {{ form_label(form.password, null, {
+                    label_attr: { class: 'block text-sm text-gray-400 mb-1' }
+                }) }}
+                {{ form_widget(form.password, {
+                    attr: {
+                        class: 'w-full bg-black border border-zinc-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-800'
+                    }
+                }) }}
+                {{ form_errors(form.password) }}
+            </div>
+
+            {# ADDRESS #}
+            <div class="border-t border-zinc-800 pt-6">
+                <h2 class="text-sm uppercase tracking-widest text-gray-400 mb-4">
+                    Adresse
+                </h2>
+
+                <div class="space-y-4">
+                    {{ form_row(form.address.street, {
+                        attr: { class: 'w-full bg-black border border-zinc-700 rounded px-3 py-2' }
+                    }) }}
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {{ form_row(form.address.postalCode, {
+                            attr: { class: 'w-full bg-black border border-zinc-700 rounded px-3 py-2' }
+                        }) }}
+                        {{ form_row(form.address.city, {
+                            attr: { class: 'w-full bg-black border border-zinc-700 rounded px-3 py-2' }
+                        }) }}
+                    </div>
+
+                    {{ form_row(form.address.country, {
+                        attr: { class: 'w-full bg-black border border-zinc-700 rounded px-3 py-2' }
+                    }) }}
+                </div>
+            </div>
+
+            {# TERMS #}
+            <div class="flex items-start">
+                {{ form_widget(form.agreeTerms, {
+                    attr: { class: 'mt-1' }
+                }) }}
+                <span class="text-sm text-gray-400 ml-2">
+                    {{ form_label(form.agreeTerms) }}
+                </span>
+            </div>
+
+            {# SUBMIT #}
+            <button type="submit"
+                    class="w-full bg-red-900 hover:bg-red-800 transition rounded py-2 font-semibold tracking-wide uppercase">
+                S’inscrire
+            </button>
+
+            {{ form_end(form) }}
+
+            <p class="text-center text-sm text-gray-500 mt-6">
+                Déjà initié ?
+                <a href="{{ path('login') }}" class="text-red-700 hover:underline">
+                    Se connecter
+                </a>
+            </p>
+
+        </div>
+    </section>
+{% endblock %}

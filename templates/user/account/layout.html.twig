@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte – The Dark Menace Kult{% endblock %}
+
+{% block body %}
+    <section class="min-h-screen bg-black text-gray-100">
+        <div class="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-8">
+
+            <!-- Sidebar -->
+            <aside class="md:col-span-1">
+                {% include 'user/account/_sidebar.html.twig' %}
+            </aside>
+
+            <!-- Content -->
+            <main class="md:col-span-3 bg-zinc-900 border border-zinc-800 rounded-xl p-8 shadow-xl">
+                {% block account_content %}{% endblock %}
+            </main>
+
+        </div>
+    </section>
+{% endblock %}
