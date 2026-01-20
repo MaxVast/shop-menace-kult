@@ -2,6 +2,7 @@
 
 namespace App\Entity\Product;
 
+use App\Entity\Cart\CartItem;
 use App\Entity\Media\ProductsImage;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,7 +14,8 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-class Products {
+#[ORM\Table(name: 'products')]
+class Product {
 
     public const array STATUSES = ['draft', 'published', 'archived'];
 
@@ -79,7 +81,7 @@ class Products {
     private ?string $license_type = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank, Assert\Choice(Products::STATUSES)]
+    #[Assert\NotBlank, Assert\Choice(Product::STATUSES)]
     private string $status = 'draft';
 
     #[ORM\Column(type: 'datetime')]
@@ -223,6 +225,15 @@ class Products {
     public function setDiscount(?int $discount): void
     {
         $this->discount = $discount !== null ? (int) $discount : null;
+    }
+
+    public function getPriceDiscount(): float
+    {
+        if ($this->discount === null) {
+            return $this->price / 100;
+        }
+
+        return ($this->price * (1 - $this->discount / 100)) / 100;
     }
 
     /**

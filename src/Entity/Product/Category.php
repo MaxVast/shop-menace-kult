@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Product;
 
-use App\Entity\Product\Products;
+use App\Entity\Product\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -25,7 +25,7 @@ class Category
     private string $name;
 
 
-    #[ORM\ManyToMany(targetEntity:Products::class, mappedBy:"categories")]
+    #[ORM\ManyToMany(targetEntity:Product::class, mappedBy:"categories")]
     private Collection $products;
 
     public function __construct()
@@ -48,7 +48,7 @@ class Category
         $this->products = $products;
     }
 
-    public function addProduct(Products $product): self
+    public function addProduct(Product $product): self
     {
         if (!$this->products->contains($product)) {
             $this->products->add($product);
@@ -59,7 +59,7 @@ class Category
     }
 
     // Helper pour retirer un produit
-    public function removeProduct(Products $product): self
+    public function removeProduct(Product $product): self
     {
         if ($this->products->removeElement($product)) {
             $product->removeCategory($this);

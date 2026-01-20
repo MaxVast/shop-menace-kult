@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 
-use App\Entity\Product\Products;
+use App\Entity\Product\Product;
 use App\Form\Type\Admin\ProductsImageType;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -31,7 +31,7 @@ class ProductCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return Products::class;
+        return Product::class;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -111,8 +111,8 @@ class ProductCrudController extends AbstractCrudController
 
             ChoiceField::new('status', 'Statut')
                 ->setChoices(array_combine(
-                    Products::STATUSES,
-                    Products::STATUSES
+                    Product::STATUSES,
+                    Product::STATUSES
                 ))
                 ->setFormTypeOption('empty_data', 'draft'),
         ];
@@ -132,7 +132,7 @@ class ProductCrudController extends AbstractCrudController
     {
         $id = $request->query->get('entityId');
 
-        $product = $em->getRepository(Products::class)->find($id);
+        $product = $em->getRepository(Product::class)->find($id);
 
         if (!$product) {
             throw $this->createNotFoundException('Produit non trouvé');
@@ -140,7 +140,7 @@ class ProductCrudController extends AbstractCrudController
 
         $form = $this->createFormBuilder($product)
             ->add('status', ChoiceType::class, [
-                'choices' => array_combine(Products::STATUSES, Products::STATUSES),
+                'choices' => array_combine(Product::STATUSES, Product::STATUSES),
                 'label' => 'Statut',
             ])
             ->getForm();
@@ -161,7 +161,7 @@ class ProductCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $em, $entityInstance): void
     {
-        if ($entityInstance instanceof Products) {
+        if ($entityInstance instanceof Product) {
             $entityInstance->setUpdatedAt(new \DateTimeImmutable());
         }
 

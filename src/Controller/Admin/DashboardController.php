@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Product\Category;
-use App\Entity\Product\Products;
+use App\Entity\Product\Product;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -30,7 +30,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::section('Catalogue');
 
-        yield MenuItem::linkToCrud('Produits', 'fa fa-cube', Products::class);
+        yield MenuItem::linkToCrud('Produits', 'fa fa-cube', Product::class);
         yield MenuItem::linkToCrud('Catégories', 'fa fa-tags', Category::class);
     }
 }

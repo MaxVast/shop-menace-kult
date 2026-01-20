@@ -2,7 +2,7 @@
 
 namespace App\Controller\Cart;
 
-use App\Entity\Product\Products;
+use App\Entity\Product\Product;
 use App\Service\Cart\CartService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +12,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 #[Route('/cart/add/{id}', name: 'cart_add', methods: ['POST'])]
 class CartAddController {
-    public function __invoke(Products $product, Request $request, CartService $cart, RouterInterface $router): Response
+    public function __invoke(Product $product, Request $request, CartService $cart, RouterInterface $router): Response
     {
         $paintingOption = null;
 

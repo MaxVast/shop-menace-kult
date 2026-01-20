@@ -27,7 +27,7 @@
 
                 Quantité : {{ item.quantity }}<br>
 
-                Prix : {{ (item.price / 100) | number_format(2, ',', ' ') }} €
+                Prix : {{ (item.price) | number_format(2, ',', ' ') }} €
 
                 {% if item.paintingOption %}
                     Option : {{ item.paintingOption.name }}
@@ -40,7 +40,7 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
         <p class="mt-6 text-xl">
-            Total : {{ (total / 100)|number_format(2, ',', ' ') }} €
+            Total : {{ (total)|number_format(2, ',', ' ') }} €
         </p>
     </div>
 </section>

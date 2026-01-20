@@ -11,10 +11,10 @@ use Twig\Environment;
 #[AsController]
 #[Route('/cart', name: 'cart_index', methods: ['GET', 'POST'])]
 class CartIndexController {
-    public function __invoke(Environment $twig, CartService $cartService)
+    public function __invoke(Environment $twig, CartService $cartService): Response
     {
         return new Response($twig->render('cart/cart.html.twig', [
-            'cart' => $cartService->getCart(),
+            'cart' => $cartService->getItemsForCartView(),
             'total' => $cartService->getTotal(),
         ]), Response::HTTP_OK);
     }

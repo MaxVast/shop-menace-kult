@@ -2,6 +2,7 @@
 
 namespace App\Entity\User;
 
+use App\Entity\Cart\Cart;
 use App\Entity\Traits\TimestampableEntityTrait;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -39,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     private Address $address;
 
     use TimestampableEntityTrait;
+
+    #[ORM\OneToOne(targetEntity: Cart::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Cart $cart = null;
 
     public function __construct()
     {
@@ -100,4 +104,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     public function eraseCredentials(): void {}
 
     public function getUserIdentifier(): string { return $this->getEmail(); }
+
+    public function getCart(): ?Cart
+    {
+        return $this->cart;
+    }
+
+    public function setCart(Cart $cart): self
+    {
+        $this->cart = $cart;
+        return $this;
+    }
 }
