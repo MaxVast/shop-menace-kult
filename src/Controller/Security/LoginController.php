@@ -12,10 +12,8 @@ use Twig\Environment;
 #[AsController]
 #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
 class LoginController {
-    public function __invoke(AuthenticationUtils $authenticationUtils, Environment $twig, CartService $cartService) : Response
+    public function __invoke(AuthenticationUtils $authenticationUtils, Environment $twig) : Response
     {
-        $cartService->mergeSessionCart();
-
         return new Response($twig->render('security/login.html.twig', [
             'last_username' => $authenticationUtils->getLastUsername(),
             'error' => $authenticationUtils->getLastAuthenticationError(),

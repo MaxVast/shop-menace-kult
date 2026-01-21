@@ -35,6 +35,5 @@ class CartAddController {
         return new RedirectResponse(
             $router->generate('cart_index')
         );
-
     }
 }

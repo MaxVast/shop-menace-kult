@@ -11,14 +11,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\SecurityBundle\Security;
 
 final class CartService {
-    private const CART_KEY = 'cart';
+    private const string CART_KEY = 'cart';
 
     public function __construct(
-        private RequestStack $requestStack,
-        private Security $security,
-        private CartRepository $cartRepository,
-        private CartItemRepository $cartItemRepository,
-        private ProductRepository $productRepository,
+        private readonly RequestStack       $requestStack,
+        private readonly Security           $security,
+        private readonly CartRepository     $cartRepository,
+        private readonly CartItemRepository $cartItemRepository,
+        private readonly ProductRepository  $productRepository,
     ) {}
 
     private function getSession()
@@ -31,7 +31,7 @@ final class CartService {
         return $this->getSession()->get(self::CART_KEY, []);
     }
 
-    public function getCart(): Cart|array
+    public function getCart(): object
     {
         $user = $this->security->getUser();
 
@@ -63,9 +63,9 @@ final class CartService {
 
     public function add(string $productId, string $name, int $price, int $quantity = 1, ?array $paintingOption = null): void {
 
+        $product = $this->productRepository->find($productId);
         if ($this->security->getUser()) {
             $cart = $this->getCart();
-            $product = $this->productRepository->find($productId);
 
             $item = $this->cartItemRepository->findOneBy([
                 'cart' => $cart,
@@ -90,11 +90,12 @@ final class CartService {
         $cart = $this->getSessionCart();
         if (isset($cart[$productId])) {
             $cart[$productId]['quantity'] += $quantity;
+            $cart[$productId]['price'] = $product->getPriceDiscount() * $cart[$productId]['quantity'];
         } else {
             $cart[$productId] = [
                 'productId' => $productId,
                 'name' => $name,
-                'price' => $price,
+                'price' => $product->getPriceDiscount(),
                 'quantity' => $quantity,
                 'paintingOption' => $paintingOption,
             ];
@@ -105,7 +106,34 @@ final class CartService {
 
     public function remove(string $productId): void
     {
-        $cart = $this->getCart();
+        $this->security->getUser();
+
+        if ($this->security->getUser()) {
+            $cart = $this->getCart();
+            if (!$cart) {
+                return;
+            }
+
+            $product = $this->productRepository->find($productId);
+            $item = $this->cartItemRepository->findOneBy([
+                'cart' => $cart,
+                'product' => $product,
+            ]);
+
+            if (!$item) {
+                return;
+            }
+
+            $this->cartItemRepository->removeAndSave($item);
+            return;
+        }
+
+        $cart = $this->getSessionCart();
+
+        if (!isset($cart[$productId])) {
+            return;
+        }
+
         unset($cart[$productId]);
 
         $this->getSession()->set(self::CART_KEY, $cart);
@@ -137,10 +165,21 @@ final class CartService {
 
     public function mergeSessionCart(): void
     {
-        if (!$this->security->getUser()) return;
+        $sessionCart = $this->getSessionCart();
 
-        foreach ($this->getSessionCart() as $item) {
-            $this->add($item['productId'], $item['quantity'], $item['paintingOption']);
+        dump('SESSION CART', $sessionCart);
+
+        $user = $this->security->getUser();
+        dump('USER', $user);
+
+        if (!$user || !$sessionCart) {
+            return;
+        }
+
+        $this->getCart();
+
+        foreach ($sessionCart as $item) {
+            $this->add($item['productId'], $item['name'], $item['quantity'], $item['paintingOption']);
         }
 
         $this->clear();
@@ -180,7 +219,97 @@ final class CartService {
             return $cart;
         }
 
-        return $this->getSessionCart();
+        $items = $this->getSessionCart();
 
+        $cart = [];
+
+        foreach ($items as $item) {
+            $productId = $item['productId'];
+            if (isset($item[$productId])) {
+                $cart[$productId]['quantity'] += $item->getQuantity();
+            } else{
+                $cart[$productId] = [
+                    'productId' => $productId,
+                    'name' => $item['name'],
+                    'price' => $item['price'] * $item['quantity'],
+                    'quantity' => $item['quantity'],
+                    'paintingOption' => null,
+                ];
+            }
+        }
+
+        return $cart;
+
+    }
+
+    public function decrease(string $productId): void
+    {
+        $user = $this->security->getUser();
+
+        if ($user) {
+            $cart = $this->cartRepository->findOneBy(['user' => $user]);
+
+            if (!$cart) return;
+
+            $item = $this->cartItemRepository->findOneBy([
+                'cart' => $cart,
+                'product' => $productId,
+            ]);
+
+            if (!$item) return;
+
+            $quantity = $item->getQuantity() - 1;
+
+            if ($quantity <= 0) {
+                $this->cartItemRepository->removeAndSave($item);
+                return;
+            }
+
+            $item->setQuantity($quantity);
+            $this->cartItemRepository->persistAndSave($item);
+            return;
+        }
+
+        $cart = $this->getSessionCart();
+
+        if (!isset($cart[$productId])) return;
+
+        $cart[$productId]['quantity']--;
+
+        if ($cart[$productId]['quantity'] <= 0) {
+            unset($cart[$productId]);
+        }
+
+        $this->getSession()->set(self::CART_KEY, $cart);
+    }
+
+    public function increase(string $productId): void
+    {
+        $user = $this->security->getUser();
+
+        if ($user) {
+            $cart = $this->cartRepository->findOneBy(['user' => $user]);
+
+            if (!$cart) return;
+
+            $item = $this->cartItemRepository->findOneBy([
+                'cart' => $cart,
+                'product' => $productId,
+            ]);
+
+            if (!$item) return;
+
+            $item->setQuantity($item->getQuantity() + 1);
+            $this->cartItemRepository->persistAndSave($item);
+            return;
+        }
+
+        $cart = $this->getSessionCart();
+
+        if (!isset($cart[$productId])) return;
+
+        $cart[$productId]['quantity']++;
+
+        $this->getSession()->set(self::CART_KEY, $cart);
     }
 }
