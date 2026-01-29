@@ -11,7 +11,7 @@ use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\SecurityBundle\Security;
 
-final class CartService {
+final class CartService implements CartServiceInterface {
     private const string CART_KEY = 'cart';
 
     public function __construct(
@@ -131,6 +131,7 @@ final class CartService {
             }
 
             $this->cartItemRepository->removeAndSave($item);
+            $this->cartRepository->removeAndSave($cart);
             return;
         }
 

@@ -53,7 +53,11 @@
 </head>
 
 <body class="text-bone font-serif tracking-wide">
-
+{% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ path('admin') }}" class="text-sm uppercase tracking-widest font-bold">
+        > Back-office
+    </a>
+{% endif %}
 <!-- HEADER -->
 <header class="border-b border-white/10 bg-black/70 backdrop-blur">
     <div class="max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">

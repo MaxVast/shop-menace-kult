@@ -2,13 +2,13 @@
 
 namespace App\EventListener;
 
-use App\Service\Cart\CartService;
+use App\Service\Cart\CartServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 
-class CartLoginListener {
+readonly class CartLoginListener {
     public function __construct(
-        private readonly CartService $cartService,
+        private CartServiceInterface $cartService,
         private LoggerInterface $logger
     ) {}
 
