@@ -28,7 +28,11 @@ eval $(minikube docker-env)
 docker build -f docker/Dockerfile --target php_fpm --build-arg APP_ENV=prod -t shop-menace-kult-php-fpm:local .
 docker build -f docker/Dockerfile --target nginx --build-arg APP_ENV=prod -t shop-menace-kult-nginx:local .
 
-# 3. Déployer la base de données
+# 3. Créer le secret des identifiants BDD, puis déployer la base de données
+kubectl create secret generic postgres-credentials \
+  --from-literal=POSTGRES_DB=<db_name> \
+  --from-literal=POSTGRES_USER=<db_user> \
+  --from-literal=POSTGRES_PASSWORD=<db_password>
 kubectl apply -f k8s/database/postgres.yaml
 
 # 4. Déployer l'application via Helm
