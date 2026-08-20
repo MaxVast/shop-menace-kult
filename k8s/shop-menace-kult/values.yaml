@@ -7,7 +7,6 @@ phpFpm:
     env:
         APP_ENV: prod
         APP_DEBUG: "0"
-        DATABASE_URL: "postgresql://shop:shop@postgres:5432/shop?serverVersion=13&charset=utf8"
     service:
         port: 9000
     resources: {}
@@ -25,7 +24,7 @@ nginx:
         NGINX_ROOT_DIR: public
         PHP_FPM_CONTAINER: shop-menace-kult-php-fpm
     service:
-        type: ClusterIP
+        type: LoadBalancer
         port: 80
     resources: {}
 
