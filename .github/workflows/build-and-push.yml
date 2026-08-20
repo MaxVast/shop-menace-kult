@@ -69,6 +69,9 @@ jobs:
       runs-on: ubuntu-latest
       permissions:
           contents: read
+      env:
+          GKE_CLUSTER: shop-menace-kult-cluster
+          GKE_ZONE: europe-west1-b
 
       steps:
           -   name: Checkout
