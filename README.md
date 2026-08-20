@@ -1,6 +1,10 @@
 # Shop the menace kult
 
 > Online store selling resin figures and figures painted in the "grimdark" style.
+> 
+> FR: Projet pour mettre en place CI/CD, Kubernetes, Helm,Terraform et un deploiement sur GKE
+> 
+> EN : Project to implement CI/CD, Kubernetes, Helm, Terraform, and to deploy to GKE.
 
 ## 🐳 Stack
 - PHP 8.4
