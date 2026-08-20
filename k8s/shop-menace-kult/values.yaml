@@ -1,13 +1,12 @@
 phpFpm:
     replicaCount: 1
     image:
-        repository: shop-menace-kult-php-fpm
-        pullPolicy: Never
-        tag: "local"
+        repository: ghcr.io/maxvast/shop-menace-kult-php-fpm
+        pullPolicy: IfNotPresent
+        tag: "latest"
     env:
         APP_ENV: prod
         APP_DEBUG: "0"
-        DATABASE_URL: "postgresql://shop:shop@postgres:5432/shop?serverVersion=13&charset=utf8"
     service:
         port: 9000
     resources: {}
@@ -15,9 +14,9 @@ phpFpm:
 nginx:
     replicaCount: 1
     image:
-        repository: shop-menace-kult-nginx
-        pullPolicy: Never
-        tag: "local"
+        repository: ghcr.io/maxvast/shop-menace-kult-nginx
+        pullPolicy: IfNotPresent
+        tag: "latest"
     env:
         FPM_ENTRYPOINT: index
         NGINX_PROJECT: prod
@@ -25,11 +24,13 @@ nginx:
         NGINX_ROOT_DIR: public
         PHP_FPM_CONTAINER: shop-menace-kult-php-fpm
     service:
-        type: ClusterIP
+        type: LoadBalancer
         port: 80
     resources: {}
 
-imagePullSecrets: []
+imagePullSecrets:
+    - name: ghcr-secret
+
 nameOverride: ""
 fullnameOverride: ""
 
