@@ -14,6 +14,8 @@ spec:
       labels:
         app: {{ .Release.Name }}-php-fpm
     spec:
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       containers:
         - name: php-fpm
           image: "{{ .Values.phpFpm.image.repository }}:{{ .Values.phpFpm.image.tag }}"
@@ -44,6 +46,8 @@ spec:
       labels:
         app: {{ .Release.Name }}-nginx
     spec:
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       containers:
         - name: nginx
           image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
