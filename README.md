@@ -56,7 +56,7 @@ kubectl port-forward service/shop-menace-kult-nginx 8443:443
 Le cluster Kubernetes de production est provisionné via Terraform sur Google Kubernetes Engine.
 
 ### Infrastructure
-- Cluster GKE **zonal** (`europe-west1-b`), couvert par le free tier GKE ($74.40 de crédits mensuels)
+- Cluster GKE **zonal** (`europe-west1-b`), couvert par le free tier GKE
 - Node pool : 1 node `e2-small` (2 vCPU partagés, 2 Go RAM)
 - Fichiers : `terraform/main.tf`, `terraform/variables.tf`
 
@@ -65,9 +65,9 @@ Le cluster Kubernetes de production est provisionné via Terraform sur Google Ku
 ```bash
 cd terraform
 
-# Configurer votre project ID GCP
+# Configurer project ID GCP
 cp terraform.tfvars.example terraform.tfvars
-# éditer terraform.tfvars avec votre project_id
+# éditer terraform.tfvars avec project_id
 
 # Authentification
 gcloud auth application-default login
