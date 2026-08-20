@@ -1,0 +1,45 @@
+phpFpm:
+    replicaCount: 1
+    image:
+        repository: shop-menace-kult-php-fpm
+        pullPolicy: Never
+        tag: "local"
+    env:
+        APP_ENV: prod
+        APP_DEBUG: "0"
+        DATABASE_URL: "postgresql://shop:shop@postgres:5432/shop?serverVersion=13&charset=utf8"
+    service:
+        port: 9000
+    resources: {}
+
+nginx:
+    replicaCount: 1
+    image:
+        repository: shop-menace-kult-nginx
+        pullPolicy: Never
+        tag: "local"
+    env:
+        FPM_ENTRYPOINT: index
+        NGINX_PROJECT: prod
+        NGINX_HOST: shop-menace-kult.fr
+        NGINX_ROOT_DIR: public
+        PHP_FPM_CONTAINER: shop-menace-kult-php-fpm
+    service:
+        type: ClusterIP
+        port: 80
+    resources: {}
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+        - host: shop-menace-kult.local
+          paths:
+              - path: /
+                pathType: ImplementationSpecific
+    tls: []

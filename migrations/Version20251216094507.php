@@ -20,6 +20,10 @@ final class Version20251216094507 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE TABLE products (id UUID NOT NULL, name VARCHAR(65) NOT NULL, slug VARCHAR(75) NOT NULL, description TEXT DEFAULT NULL, price INT NOT NULL, discount INT DEFAULT NULL, stock INT DEFAULT NULL, lot BOOLEAN DEFAULT true NOT NULL, print_on_demand BOOLEAN DEFAULT true NOT NULL, painting_on_demand BOOLEAN DEFAULT true NOT NULL, production_delay_days SMALLINT DEFAULT NULL, license_name VARCHAR(80) DEFAULT NULL, license_number VARCHAR(80) DEFAULT NULL, license_type VARCHAR(80) DEFAULT NULL, status VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_B3BA5A5A989D9B62 ON products (slug)');
+        $this->addSql('COMMENT ON COLUMN products.id IS \'(DC2Type:uuid)\'');
+
         $this->addSql('CREATE TABLE category (id UUID NOT NULL, name VARCHAR(64) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('COMMENT ON COLUMN category.id IS \'(DC2Type:uuid)\'');
         $this->addSql('CREATE TABLE products_categories (product_id UUID NOT NULL, category_id UUID NOT NULL, PRIMARY KEY(product_id, category_id))');
@@ -58,6 +62,7 @@ final class Version20251216094507 extends AbstractMigration
         $this->addSql('ALTER TABLE products_categories DROP CONSTRAINT FK_E8ACBE764584665A');
         $this->addSql('ALTER TABLE products_categories DROP CONSTRAINT FK_E8ACBE7612469DE2');
         $this->addSql('ALTER TABLE products_image DROP CONSTRAINT FK_2564FA8F6C8A81A9');
+        $this->addSql('DROP TABLE products');
         $this->addSql('DROP TABLE category');
         $this->addSql('DROP TABLE products_categories');
         $this->addSql('DROP TABLE products_image');
