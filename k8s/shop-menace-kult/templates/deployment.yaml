@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-php-fpm
+  labels:
+    app: {{ .Release.Name }}-php-fpm
+spec:
+  replicas: {{ .Values.phpFpm.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-php-fpm
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-php-fpm
+    spec:
+      containers:
+        - name: php-fpm
+          image: "{{ .Values.phpFpm.image.repository }}:{{ .Values.phpFpm.image.tag }}"
+          imagePullPolicy: {{ .Values.phpFpm.image.pullPolicy }}
+          ports:
+            - containerPort: 9000
+          env:
+            {{- range $key, $value := .Values.phpFpm.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.phpFpm.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nginx
+  labels:
+    app: {{ .Release.Name }}-nginx
+spec:
+  replicas: {{ .Values.nginx.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-nginx
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+          imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+          env:
+            {{- range $key, $value := .Values.nginx.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.nginx.resources | nindent 12 }}
