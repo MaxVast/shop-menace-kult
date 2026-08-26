@@ -1,0 +1,10 @@
+# Terraform local state & cache
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.*
+
+# Fichiers de variables potentiellement sensibles
+*.tfvars
+!terraform.tfvars.example

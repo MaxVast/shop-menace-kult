@@ -1,0 +1,46 @@
+phpFpm:
+    replicaCount: 1
+    image:
+        repository: ghcr.io/maxvast/shop-menace-kult-php-fpm
+        pullPolicy: IfNotPresent
+        tag: "latest"
+    env:
+        APP_ENV: prod
+        APP_DEBUG: "0"
+    service:
+        port: 9000
+    resources: {}
+
+nginx:
+    replicaCount: 1
+    image:
+        repository: ghcr.io/maxvast/shop-menace-kult-nginx
+        pullPolicy: IfNotPresent
+        tag: "latest"
+    env:
+        FPM_ENTRYPOINT: index
+        NGINX_PROJECT: prod
+        NGINX_HOST: shop-menace-kult.fr
+        NGINX_ROOT_DIR: public
+        PHP_FPM_CONTAINER: shop-menace-kult-php-fpm
+    service:
+        type: LoadBalancer
+        port: 80
+    resources: {}
+
+imagePullSecrets:
+    - name: ghcr-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+        - host: shop-menace-kult.local
+          paths:
+              - path: /
+                pathType: ImplementationSpecific
+    tls: []
