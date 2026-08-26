@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20251216094507 extends AbstractMigration
+final class Version20260121091455 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,8 +20,21 @@ final class Version20251216094507 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE TABLE cart (id UUID NOT NULL, user_id UUID NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_BA388B7A76ED395 ON cart (user_id)');
+        $this->addSql('COMMENT ON COLUMN cart.id IS \'(DC2Type:uuid)\'');
+        $this->addSql('COMMENT ON COLUMN cart.user_id IS \'(DC2Type:uuid)\'');
+        $this->addSql('CREATE TABLE cart_item (id UUID NOT NULL, cart_id UUID NOT NULL, product_id UUID NOT NULL, quantity INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_F0FE25271AD5CDBF ON cart_item (cart_id)');
+        $this->addSql('CREATE INDEX IDX_F0FE25274584665A ON cart_item (product_id)');
+        $this->addSql('COMMENT ON COLUMN cart_item.id IS \'(DC2Type:uuid)\'');
+        $this->addSql('COMMENT ON COLUMN cart_item.cart_id IS \'(DC2Type:uuid)\'');
+        $this->addSql('COMMENT ON COLUMN cart_item.product_id IS \'(DC2Type:uuid)\'');
         $this->addSql('CREATE TABLE category (id UUID NOT NULL, name VARCHAR(64) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('COMMENT ON COLUMN category.id IS \'(DC2Type:uuid)\'');
+        $this->addSql('CREATE TABLE products (id UUID NOT NULL, name VARCHAR(65) NOT NULL, slug VARCHAR(75) NOT NULL, description TEXT DEFAULT NULL, price INT NOT NULL, discount INT DEFAULT NULL, stock INT DEFAULT NULL, lot BOOLEAN DEFAULT true NOT NULL, print_on_demand BOOLEAN DEFAULT true NOT NULL, painting_on_demand BOOLEAN DEFAULT true NOT NULL, production_delay_days SMALLINT DEFAULT NULL, license_name VARCHAR(80) DEFAULT NULL, license_number VARCHAR(80) DEFAULT NULL, license_type VARCHAR(80) DEFAULT NULL, status VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_B3BA5A5A989D9B62 ON products (slug)');
+        $this->addSql('COMMENT ON COLUMN products.id IS \'(DC2Type:uuid)\'');
         $this->addSql('CREATE TABLE products_categories (product_id UUID NOT NULL, category_id UUID NOT NULL, PRIMARY KEY(product_id, category_id))');
         $this->addSql('CREATE INDEX IDX_E8ACBE764584665A ON products_categories (product_id)');
         $this->addSql('CREATE INDEX IDX_E8ACBE7612469DE2 ON products_categories (category_id)');
@@ -31,6 +44,9 @@ final class Version20251216094507 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_2564FA8F6C8A81A9 ON products_image (products_id)');
         $this->addSql('COMMENT ON COLUMN products_image.id IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN products_image.products_id IS \'(DC2Type:uuid)\'');
+        $this->addSql('CREATE TABLE users (id UUID NOT NULL, username VARCHAR(180) NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, address_street VARCHAR(255) DEFAULT NULL, address_city VARCHAR(100) DEFAULT NULL, address_postal_code VARCHAR(20) DEFAULT NULL, address_country VARCHAR(100) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_1483A5E9E7927C74 ON users (email)');
+        $this->addSql('COMMENT ON COLUMN users.id IS \'(DC2Type:uuid)\'');
         $this->addSql('CREATE TABLE messenger_messages (id BIGSERIAL NOT NULL, body TEXT NOT NULL, headers TEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, available_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, delivered_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_75EA56E0FB7336F0 ON messenger_messages (queue_name)');
         $this->addSql('CREATE INDEX IDX_75EA56E0E3BD61CE ON messenger_messages (available_at)');
@@ -46,6 +62,9 @@ final class Version20251216094507 extends AbstractMigration
         $$ LANGUAGE plpgsql;');
         $this->addSql('DROP TRIGGER IF EXISTS notify_trigger ON messenger_messages;');
         $this->addSql('CREATE TRIGGER notify_trigger AFTER INSERT OR UPDATE ON messenger_messages FOR EACH ROW EXECUTE PROCEDURE notify_messenger_messages();');
+        $this->addSql('ALTER TABLE cart ADD CONSTRAINT FK_BA388B7A76ED395 FOREIGN KEY (user_id) REFERENCES users (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE cart_item ADD CONSTRAINT FK_F0FE25271AD5CDBF FOREIGN KEY (cart_id) REFERENCES cart (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE cart_item ADD CONSTRAINT FK_F0FE25274584665A FOREIGN KEY (product_id) REFERENCES products (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE products_categories ADD CONSTRAINT FK_E8ACBE764584665A FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE products_categories ADD CONSTRAINT FK_E8ACBE7612469DE2 FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE products_image ADD CONSTRAINT FK_2564FA8F6C8A81A9 FOREIGN KEY (products_id) REFERENCES products (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -55,12 +74,19 @@ final class Version20251216094507 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
+        $this->addSql('ALTER TABLE cart DROP CONSTRAINT FK_BA388B7A76ED395');
+        $this->addSql('ALTER TABLE cart_item DROP CONSTRAINT FK_F0FE25271AD5CDBF');
+        $this->addSql('ALTER TABLE cart_item DROP CONSTRAINT FK_F0FE25274584665A');
         $this->addSql('ALTER TABLE products_categories DROP CONSTRAINT FK_E8ACBE764584665A');
         $this->addSql('ALTER TABLE products_categories DROP CONSTRAINT FK_E8ACBE7612469DE2');
         $this->addSql('ALTER TABLE products_image DROP CONSTRAINT FK_2564FA8F6C8A81A9');
+        $this->addSql('DROP TABLE cart');
+        $this->addSql('DROP TABLE cart_item');
         $this->addSql('DROP TABLE category');
+        $this->addSql('DROP TABLE products');
         $this->addSql('DROP TABLE products_categories');
         $this->addSql('DROP TABLE products_image');
+        $this->addSql('DROP TABLE users');
         $this->addSql('DROP TABLE messenger_messages');
     }
 }

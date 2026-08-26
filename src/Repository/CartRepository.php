@@ -22,4 +22,10 @@ class CartRepository extends ServiceEntityRepository {
         $this->getEntityManager()->persist($cart);
         $this->save($cart);
     }
+
+    public function removeAndSave(?Cart $cart = null): void
+    {
+        $this->getEntityManager()->remove($cart);
+        $this->save($cart);
+    }
 }

@@ -4,13 +4,14 @@ namespace App\Service\Cart;
 
 use App\Entity\Cart\Cart;
 use App\Entity\Cart\CartItem;
+use App\Entity\User\User;
 use App\Repository\CartItemRepository;
 use App\Repository\CartRepository;
 use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\SecurityBundle\Security;
 
-final class CartService {
+final class CartService implements CartServiceInterface {
     private const string CART_KEY = 'cart';
 
     public function __construct(
@@ -31,8 +32,13 @@ final class CartService {
         return $this->getSession()->get(self::CART_KEY, []);
     }
 
-    public function getCart(): object
+    public function getCart(?User $user = null): object|array
     {
+        if ($user) {
+            return $this->cartRepository->findOneBy(['user' => $user])
+                ?? $this->createCartForUser($user);
+        }
+
         $user = $this->security->getUser();
 
         if ($user) {
@@ -61,11 +67,11 @@ final class CartService {
     }
 
 
-    public function add(string $productId, string $name, int $price, int $quantity = 1, ?array $paintingOption = null): void {
+    public function add(string $productId, string $name, int $price, int $quantity = 1, ?array $paintingOption = null, ?User $user = null): void {
 
         $product = $this->productRepository->find($productId);
-        if ($this->security->getUser()) {
-            $cart = $this->getCart();
+        if ($user) {
+            $cart = $this->getCart($user);
 
             $item = $this->cartItemRepository->findOneBy([
                 'cart' => $cart,
@@ -106,10 +112,10 @@ final class CartService {
 
     public function remove(string $productId): void
     {
-        $this->security->getUser();
+        $user = $this->security->getUser();
 
-        if ($this->security->getUser()) {
-            $cart = $this->getCart();
+        if ($user) {
+            $cart = $this->getCart($user);
             if (!$cart) {
                 return;
             }
@@ -125,6 +131,7 @@ final class CartService {
             }
 
             $this->cartItemRepository->removeAndSave($item);
+            $this->cartRepository->removeAndSave($cart);
             return;
         }
 
@@ -163,23 +170,18 @@ final class CartService {
         );
     }
 
-    public function mergeSessionCart(): void
+    public function mergeSessionCart(User $user): void
     {
         $sessionCart = $this->getSessionCart();
-
-        dump('SESSION CART', $sessionCart);
-
-        $user = $this->security->getUser();
-        dump('USER', $user);
 
         if (!$user || !$sessionCart) {
             return;
         }
 
-        $this->getCart();
+        $this->getCart($user);
 
         foreach ($sessionCart as $item) {
-            $this->add($item['productId'], $item['name'], $item['quantity'], $item['paintingOption']);
+            $this->add($item['productId'], $item['name'], $item['price'], $item['quantity'], $item['paintingOption'], $user);
         }
 
         $this->clear();

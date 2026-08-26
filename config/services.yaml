@@ -20,4 +20,4 @@ services:
     # please note that last definitions always *replace* previous ones
     App\EventListener\CartLoginListener:
         tags:
-            - { name: kernel.event_listener, event: security.login.success }
+            - { name: kernel.event_listener, event: security.authentication.success }
