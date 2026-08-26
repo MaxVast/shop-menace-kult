@@ -103,9 +103,24 @@ jobs:
 
       - name: Check application health
         run: |
+            kubectl port-forward service/shop-menace-kult-nginx 8443:443 &
+            PF_PID=$!
+            sleep 5
+            HTTP_CODE=$(curl -sk -o /dev/null -w '%{http_code}' -H "Host: prod.shop-menace-kult.fr" https://localhost:8443/health-check)
+            kill $PF_PID 2>/dev/null || true
+            if [ "$HTTP_CODE" = "200" ]; then
+            exit 0
+            fi
+            echo "Health check failed with HTTP $HTTP_CODE"
+            kubectl logs deployment/shop-menace-kult-nginx
+            kubectl logs deployment/shop-menace-kult-php-fpm
+            exit 1
+
+      - name: Check application homepage
+        run: |
           kubectl port-forward service/shop-menace-kult-nginx 8443:443 &
           sleep 5
-          HTTP_CODE=$(curl -sk -o /dev/null -w '%{http_code}' -H "Host: prod.shop-menace-kult.fr" https://localhost:8443/health-check)
+          HTTP_CODE=$(curl -sk -o /dev/null -w '%{http_code}' -H "Host: prod.shop-menace-kult.fr" https://localhost:8443/)
           if [ "$HTTP_CODE" = "200" ]; then
             exit 0
           fi
@@ -113,16 +128,3 @@ jobs:
           kubectl logs deployment/shop-menace-kult-nginx
           kubectl logs deployment/shop-menace-kult-php-fpm
           exit 1
-
-      - name: Check application homepage
-        run: |
-            kubectl port-forward service/shop-menace-kult-nginx 8443:443 &
-            sleep 5
-            HTTP_CODE=$(curl -sk -o /dev/null -w '%{http_code}' -H "Host: prod.shop-menace-kult.fr" https://localhost:8443/)
-            if [ "$HTTP_CODE" = "200" ]; then
-              exit 0
-            fi
-            echo "Health check failed with HTTP $HTTP_CODE"
-            kubectl logs deployment/shop-menace-kult-nginx
-            kubectl logs deployment/shop-menace-kult-php-fpm
-            exit 1
