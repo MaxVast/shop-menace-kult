@@ -2,6 +2,6 @@
 
 namespace App\Service\Cart;
 
-class CartItemService {
-
+class CartItemService
+{
 }

@@ -2,7 +2,6 @@
 
 namespace App\Entity\Product;
 
-use App\Entity\Cart\CartItem;
 use App\Entity\Media\ProductsImage;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,8 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'products')]
-class Product {
-
+class Product
+{
     public const array STATUSES = ['draft', 'published', 'archived'];
 
     #[ORM\Id, ORM\Column(type: 'uuid', unique: true)]
@@ -89,7 +88,7 @@ class Product {
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeInterface  $updatedAt = null;
+    private ?\DateTimeInterface $updatedAt = null;
 
     public function __construct()
     {
@@ -98,49 +97,31 @@ class Product {
         $this->categories = new ArrayCollection();
     }
 
-    /**
-     * @return Uuid|null
-     */
     public function getId(): ?Uuid
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getSlug(): string
     {
         return $this->slug;
     }
 
-    /**
-     * @param string|null $description
-     */
     public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDescription(): ?string
     {
         return $this->description;
@@ -157,6 +138,7 @@ class Product {
             $this->categories->add($category);
             $category->addProduct($this);
         }
+
         return $this;
     }
 
@@ -165,12 +147,10 @@ class Product {
         if ($this->categories->removeElement($category)) {
             $category->removeProduct($this);
         }
+
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getImages(): Collection
     {
         return $this->images;
@@ -195,98 +175,65 @@ class Product {
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getPrice(): int
     {
         return $this->price;
     }
 
-    /**
-     * @param int $price
-     */
     public function setPrice(int $price): void
     {
         $this->price = $price;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDiscount(): ?int
     {
         return $this->discount;
     }
 
-    /**
-     * @param int|null $discount
-     */
     public function setDiscount(?int $discount): void
     {
-        $this->discount = $discount !== null ? (int) $discount : null;
+        $this->discount = null !== $discount ? (int) $discount : null;
     }
 
     public function getPriceDiscount(): float
     {
-        if ($this->discount === null) {
+        if (null === $this->discount) {
             return $this->price / 100;
         }
 
         return ($this->price * (1 - $this->discount / 100)) / 100;
     }
 
-    /**
-     * @return int|null
-     */
     public function getStock(): ?int
     {
         return $this->stock;
     }
 
-    /**
-     * @param int|null $stock
-     */
     public function setStock(?int $stock): void
     {
         $this->stock = $stock;
     }
 
-    /**
-     * @return bool
-     */
     public function isLot(): bool
     {
         return $this->lot;
     }
 
-    /**
-     * @param bool $lot
-     */
     public function setLot(bool $lot): void
     {
         $this->lot = $lot;
     }
 
-    /**
-     * @return bool
-     */
     public function isPrintOnDemand(): bool
     {
         return $this->printOnDemand;
     }
 
-    /**
-     * @param bool $printOnDemand
-     */
     public function setPrintOnDemand(bool $printOnDemand): void
     {
         $this->printOnDemand = $printOnDemand;
     }
 
-    /**
-     * @return bool
-     */
     public function isPaintingOnDemand(): bool
     {
         return $this->paintingOnDemand;
@@ -295,111 +242,72 @@ class Product {
     public function setPaintingOnDemand(bool $paintingOnDemand): self
     {
         $this->paintingOnDemand = $paintingOnDemand;
+
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getProductionDelayDays(): ?int
     {
         return $this->productionDelayDays;
     }
 
-    /**
-     * @param int|null $productionDelayDays
-     */
     public function setProductionDelayDays(?int $productionDelayDays): void
     {
         $this->productionDelayDays = $productionDelayDays;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLicenseName(): ?string
     {
         return $this->license_name;
     }
 
-    /**
-     * @param string|null $license_name
-     */
     public function setLicenseName(?string $license_name): void
     {
         $this->license_name = $license_name;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLicenseNumber(): ?string
     {
         return $this->license_number;
     }
 
-    /**
-     * @param string|null $license_number
-     */
     public function setLicenseNumber(?string $license_number): void
     {
         $this->license_number = $license_number;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLicenseType(): ?string
     {
         return $this->license_type;
     }
 
-    /**
-     * @param string|null $license_type
-     */
     public function setLicenseType(?string $license_type): void
     {
         $this->license_type = $license_type;
     }
 
-    /**
-     * @return string
-     */
     public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    /**
-     * @param string $status
-     */
     public function setStatus(string $status): void
     {
         $this->status = $status;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    /**
-     * @return \DateTimeInterface|null
-     */
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    /**
-     * @param \DateTimeInterface|null $updatedAt
-     */
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }
-
 }

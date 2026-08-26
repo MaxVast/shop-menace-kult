@@ -8,19 +8,21 @@ use App\Entity\User\User;
 use App\Repository\CartItemRepository;
 use App\Repository\CartRepository;
 use App\Repository\ProductRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
-final class CartService implements CartServiceInterface {
+final class CartService implements CartServiceInterface
+{
     private const string CART_KEY = 'cart';
 
     public function __construct(
-        private readonly RequestStack       $requestStack,
-        private readonly Security           $security,
-        private readonly CartRepository     $cartRepository,
+        private readonly RequestStack $requestStack,
+        private readonly Security $security,
+        private readonly CartRepository $cartRepository,
         private readonly CartItemRepository $cartItemRepository,
-        private readonly ProductRepository  $productRepository,
-    ) {}
+        private readonly ProductRepository $productRepository,
+    ) {
+    }
 
     private function getSession()
     {
@@ -49,7 +51,6 @@ final class CartService implements CartServiceInterface {
         return $this->getSession()->get(self::CART_KEY, []);
     }
 
-
     public function getItemsCount(): int
     {
         if ($this->security->getUser()) {
@@ -57,7 +58,7 @@ final class CartService implements CartServiceInterface {
             $items = $this->cartItemRepository->findBy(['cart' => $cart]);
 
             return array_sum(
-                array_map(fn(CartItem $item) => $item->getQuantity(), $items)
+                array_map(fn (CartItem $item) => $item->getQuantity(), $items)
             );
         }
 
@@ -66,9 +67,8 @@ final class CartService implements CartServiceInterface {
         );
     }
 
-
-    public function add(string $productId, string $name, int $price, int $quantity = 1, ?array $paintingOption = null, ?User $user = null): void {
-
+    public function add(string $productId, string $name, int $price, int $quantity = 1, ?array $paintingOption = null, ?User $user = null): void
+    {
         $product = $this->productRepository->find($productId);
         if ($user) {
             $cart = $this->getCart($user);
@@ -81,7 +81,6 @@ final class CartService implements CartServiceInterface {
             if ($item) {
                 $item->setQuantity($item->getQuantity() + 1);
             } else {
-
                 $item = new CartItem();
 
                 $item->setCart($cart);
@@ -90,6 +89,7 @@ final class CartService implements CartServiceInterface {
             }
 
             $this->cartItemRepository->persistAndSave($item);
+
             return;
         }
 
@@ -132,6 +132,7 @@ final class CartService implements CartServiceInterface {
 
             $this->cartItemRepository->removeAndSave($item);
             $this->cartRepository->removeAndSave($cart);
+
             return;
         }
 
@@ -158,15 +159,14 @@ final class CartService implements CartServiceInterface {
             $items = $this->cartItemRepository->findBy(['cart' => $cart]);
 
             return array_sum(
-                array_map(fn(CartItem $item) =>
-                    $item->getProduct()->getPriceDiscount() * $item->getQuantity(),
+                array_map(fn (CartItem $item) => $item->getProduct()->getPriceDiscount() * $item->getQuantity(),
                     $items
                 )
             );
         }
 
         return array_sum(
-            array_map(fn($item) => $item['price'] * $item['quantity'], $this->getSessionCart())
+            array_map(fn ($item) => $item['price'] * $item['quantity'], $this->getSessionCart())
         );
     }
 
@@ -195,7 +195,7 @@ final class CartService implements CartServiceInterface {
         return $cart;
     }
 
-    public function getItemsForCartView() : array
+    public function getItemsForCartView(): array
     {
         if ($this->security->getUser()) {
             $dataCart = $this->getCart();
@@ -207,7 +207,7 @@ final class CartService implements CartServiceInterface {
                 $productId = $item->getProduct()->getId()->toRfc4122();
                 if (isset($cart[$productId])) {
                     $cart[$productId]['quantity'] += $item->getQuantity();
-                } else{
+                } else {
                     $cart[$productId] = [
                         'productId' => $productId,
                         'name' => $item->getProduct()->getName(),
@@ -229,7 +229,7 @@ final class CartService implements CartServiceInterface {
             $productId = $item['productId'];
             if (isset($item[$productId])) {
                 $cart[$productId]['quantity'] += $item->getQuantity();
-            } else{
+            } else {
                 $cart[$productId] = [
                     'productId' => $productId,
                     'name' => $item['name'],
@@ -241,7 +241,6 @@ final class CartService implements CartServiceInterface {
         }
 
         return $cart;
-
     }
 
     public function decrease(string $productId): void
@@ -251,32 +250,40 @@ final class CartService implements CartServiceInterface {
         if ($user) {
             $cart = $this->cartRepository->findOneBy(['user' => $user]);
 
-            if (!$cart) return;
+            if (!$cart) {
+                return;
+            }
 
             $item = $this->cartItemRepository->findOneBy([
                 'cart' => $cart,
                 'product' => $productId,
             ]);
 
-            if (!$item) return;
+            if (!$item) {
+                return;
+            }
 
             $quantity = $item->getQuantity() - 1;
 
             if ($quantity <= 0) {
                 $this->cartItemRepository->removeAndSave($item);
+
                 return;
             }
 
             $item->setQuantity($quantity);
             $this->cartItemRepository->persistAndSave($item);
+
             return;
         }
 
         $cart = $this->getSessionCart();
 
-        if (!isset($cart[$productId])) return;
+        if (!isset($cart[$productId])) {
+            return;
+        }
 
-        $cart[$productId]['quantity']--;
+        --$cart[$productId]['quantity'];
 
         if ($cart[$productId]['quantity'] <= 0) {
             unset($cart[$productId]);
@@ -292,25 +299,32 @@ final class CartService implements CartServiceInterface {
         if ($user) {
             $cart = $this->cartRepository->findOneBy(['user' => $user]);
 
-            if (!$cart) return;
+            if (!$cart) {
+                return;
+            }
 
             $item = $this->cartItemRepository->findOneBy([
                 'cart' => $cart,
                 'product' => $productId,
             ]);
 
-            if (!$item) return;
+            if (!$item) {
+                return;
+            }
 
             $item->setQuantity($item->getQuantity() + 1);
             $this->cartItemRepository->persistAndSave($item);
+
             return;
         }
 
         $cart = $this->getSessionCart();
 
-        if (!isset($cart[$productId])) return;
+        if (!isset($cart[$productId])) {
+            return;
+        }
 
-        $cart[$productId]['quantity']++;
+        ++$cart[$productId]['quantity'];
 
         $this->getSession()->set(self::CART_KEY, $cart);
     }

@@ -4,8 +4,8 @@ namespace App\Service\Cart;
 
 use App\Entity\User\User;
 
-interface CartServiceInterface {
-
+interface CartServiceInterface
+{
     public function getSessionCart();
 
     public function getCart(?User $user = null);
@@ -26,5 +26,5 @@ interface CartServiceInterface {
 
     public function decrease(string $productId);
 
-    function increase(string $productId);
+    public function increase(string $productId);
 }

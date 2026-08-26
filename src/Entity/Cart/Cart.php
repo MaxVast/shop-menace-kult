@@ -11,7 +11,9 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
 #[ORM\Table(name: 'cart')]
-class Cart {
+class Cart
+{
+    use TimestampableEntityTrait;
 
     #[ORM\Id, ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -22,7 +24,6 @@ class Cart {
     #[ORM\JoinColumn(unique: true, nullable: false)]
     private User $user;
 
-    use TimestampableEntityTrait;
     public function __construct(User $user)
     {
         $this->user = $user;

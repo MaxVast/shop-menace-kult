@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity\Product;
 
-use App\Entity\Product\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,8 +23,7 @@ class Category
     #[Assert\NotBlank, Assert\Length(max: 64)]
     private string $name;
 
-
-    #[ORM\ManyToMany(targetEntity:Product::class, mappedBy:"categories")]
+    #[ORM\ManyToMany(targetEntity: Product::class, mappedBy: 'categories')]
     private Collection $products;
 
     public function __construct()

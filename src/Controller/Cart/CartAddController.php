@@ -12,9 +12,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 #[Route('/cart/add/{id}', name: 'cart_add', methods: ['POST'])]
-class CartAddController {
+class CartAddController
+{
     public function __invoke(Product $product, Request $request, CartServiceInterface $cartService,
-                             RouterInterface $router, Security $security): Response
+        RouterInterface $router, Security $security): Response
     {
         $user = $security->getUser();
 

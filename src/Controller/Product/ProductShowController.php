@@ -10,11 +10,12 @@ use Twig\Environment;
 
 #[AsController]
 #[Route('/boutique/produit/{slug}', name: 'product_show', methods: ['GET'])]
-class ProductShowController {
-    public function __invoke(Environment $twig, ProductRepository $productRepository, $slug) : Response
+class ProductShowController
+{
+    public function __invoke(Environment $twig, ProductRepository $productRepository, $slug): Response
     {
         return new Response($twig->render('product/show.html.twig', [
-            'product' => $productRepository->findOneBy(['slug'=>$slug]),
+            'product' => $productRepository->findOneBy(['slug' => $slug]),
         ]), Response::HTTP_OK);
     }
 }

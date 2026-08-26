@@ -8,7 +8,9 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
-    public function __construct(private readonly CartService $cartService) {}
+    public function __construct(private readonly CartService $cartService)
+    {
+    }
 
     public function getFunctions(): array
     {
@@ -22,4 +24,3 @@ class AppExtension extends AbstractExtension
         return $this->cartService->getItemsCount();
     }
 }
-

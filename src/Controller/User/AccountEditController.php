@@ -21,9 +21,10 @@ use Twig\Environment;
 #[AsController]
 #[Route('/account/edit', name: 'account_edit', methods: ['GET', 'POST'])]
 #[IsGranted('ROLE_USER')]
-class AccountEditController {
+class AccountEditController
+{
     public function __invoke(Environment $twig, FormFactoryInterface $formFactory, Request $request, Security $security,
-                             UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, RouterInterface $router): Response
+        UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, RouterInterface $router): Response
     {
         $user = $security->getUser();
         if (!$user instanceof User) {
@@ -35,9 +36,8 @@ class AccountEditController {
 
         try {
             if ($form->isSubmitted() && $form->isValid()) {
-
                 $password = $form->get('password')->getData();
-                if($password){
+                if ($password) {
                     $hashedPassword = $passwordHasher->hashPassword(
                         $user,
                         $password
@@ -52,6 +52,7 @@ class AccountEditController {
             }
         } catch (LogicException $e) {
         }
+
         return new Response($twig->render('user/account/edit.html.twig', [
             'form' => $form->createView(),
         ]), Response::HTTP_OK);

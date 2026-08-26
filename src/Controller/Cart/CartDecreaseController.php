@@ -9,10 +9,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 #[Route('/cart/decrease/{id}', name: 'cart_decrease', methods: ['POST'])]
-class CartDecreaseController {
+class CartDecreaseController
+{
     public function __invoke(string $id, CartServiceInterface $cartService, RouterInterface $router): Response
     {
         $cartService->decrease($id);
+
         return new RedirectResponse(
             $router->generate('cart_index')
         );

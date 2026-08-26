@@ -6,13 +6,15 @@ use App\Service\Cart\CartServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 
-readonly class CartLoginListener {
+readonly class CartLoginListener
+{
     public function __construct(
         private CartServiceInterface $cartService,
-        private LoggerInterface $logger
-    ) {}
+        private LoggerInterface $logger,
+    ) {
+    }
 
-    public function __invoke(AuthenticationSuccessEvent  $event): void
+    public function __invoke(AuthenticationSuccessEvent $event): void
     {
         $this->logger->info('AUTH SUCCESS EVENT TRIGGERED');
 

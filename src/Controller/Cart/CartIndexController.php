@@ -10,7 +10,8 @@ use Twig\Environment;
 
 #[AsController]
 #[Route('/cart', name: 'cart_index', methods: ['GET', 'POST'])]
-class CartIndexController {
+class CartIndexController
+{
     public function __invoke(Environment $twig, CartServiceInterface $cartService): Response
     {
         return new Response($twig->render('cart/cart.html.twig', [

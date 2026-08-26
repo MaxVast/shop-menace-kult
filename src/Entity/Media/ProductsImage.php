@@ -20,9 +20,6 @@ class ProductsImage extends MediaObject
     #[Vich\UploadableField(mapping: 'product_images', fileNameProperty: 'name')]
     public ?File $file = null;
 
-    /**
-     * @param File|null $file
-     */
     public function setFile(?File $file = null): void
     {
         $this->file = $file;
@@ -36,9 +33,6 @@ class ProductsImage extends MediaObject
         }
     }
 
-    /**
-     * @return File|null
-     */
     public function getFile(): ?File
     {
         return $this->file;

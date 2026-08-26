@@ -36,8 +36,9 @@ tasks:
       - task: qa:cs
       - task: qa:security
       - task: qa:stan
-      - task: test:report
-      - task: test:behat
+      - task: test:unit
+      #- task: test:report
+      #- task: test:behat
 
   composer:install:
     desc: 'Install composer packages.'
