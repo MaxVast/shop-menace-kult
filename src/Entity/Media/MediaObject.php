@@ -2,11 +2,10 @@
 
 namespace App\Entity\Media;
 
-
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Uid\Uuid;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\MappedSuperclass]
 abstract class MediaObject implements MediaObjectInterface
@@ -20,27 +19,27 @@ abstract class MediaObject implements MediaObjectInterface
     public ?string $name = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    public ?string $originalName= null;
+    public ?string $originalName = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    public ?string $mimeType= null;
+    public ?string $mimeType = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     public ?string $tag = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    public ?int $size= null;
+    public ?int $size = null;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    public ?array $dimensions= null;
+    public ?array $dimensions = null;
 
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: 'datetime', nullable: true)]
-    public ?\DateTimeInterface $createdAt= null;
+    public ?\DateTimeInterface $createdAt = null;
 
     #[Gedmo\Timestampable(on: 'update')]
     #[ORM\Column(type: 'datetime', nullable: true)]
-    public ?\DateTimeInterface $updatedAt= null;
+    public ?\DateTimeInterface $updatedAt = null;
 
     public function __construct()
     {

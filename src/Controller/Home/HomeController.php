@@ -9,8 +9,9 @@ use Twig\Environment;
 
 #[AsController]
 #[Route('/', name: 'home', methods: ['GET'])]
-class HomeController {
-    public function __invoke(Environment $twig) : Response
+class HomeController
+{
+    public function __invoke(Environment $twig): Response
     {
         return new Response($twig->render('home/home.html.twig', []), Response::HTTP_OK);
     }

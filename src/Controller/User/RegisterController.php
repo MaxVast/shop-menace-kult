@@ -18,10 +18,11 @@ use Twig\Environment;
 
 #[AsController]
 #[Route('/register', name: 'register', methods: ['GET', 'POST'])]
-class RegisterController {
+class RegisterController
+{
     public function __invoke(Environment $twig, FormFactoryInterface $formFactory,
-                             UserPasswordHasherInterface $passwordHasher, Request $request,
-                             RouterInterface $router, UserRepository $userRepository) : Response
+        UserPasswordHasherInterface $passwordHasher, Request $request,
+        RouterInterface $router, UserRepository $userRepository): Response
     {
         $user = new User();
         $form = $formFactory->create(RegistrationFormType::class, $user);
@@ -29,7 +30,6 @@ class RegisterController {
         $form->handleRequest($request);
         try {
             if ($form->isSubmitted() && $form->isValid()) {
-
                 $hashedPassword = $passwordHasher->hashPassword(
                     $user,
                     $form->get('password')->getData()
@@ -46,7 +46,7 @@ class RegisterController {
         }
 
         return new Response($twig->render('user/register.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]), Response::HTTP_OK);
     }
 }

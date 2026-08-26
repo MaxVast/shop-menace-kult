@@ -11,10 +11,11 @@ use Twig\Environment;
 #[AsController]
 #[Route('/account', name: 'account_index', methods: ['GET'])]
 #[IsGranted('ROLE_USER')]
-class AccountController {
+class AccountController
+{
     public function __invoke(Environment $twig): Response
     {
-        $orders =  [];
+        $orders = [];
 
         return new Response($twig->render('user/account/index.html.twig', [
             'orders' => $orders,

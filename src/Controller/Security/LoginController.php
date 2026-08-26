@@ -10,8 +10,9 @@ use Twig\Environment;
 
 #[AsController]
 #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
-class LoginController {
-    public function __invoke(AuthenticationUtils $authenticationUtils, Environment $twig) : Response
+class LoginController
+{
+    public function __invoke(AuthenticationUtils $authenticationUtils, Environment $twig): Response
     {
         return new Response($twig->render('security/login.html.twig', [
             'last_username' => $authenticationUtils->getLastUsername(),

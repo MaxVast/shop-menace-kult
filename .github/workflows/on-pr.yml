@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cache depencies
         uses: actions/cache@v4
@@ -61,8 +61,8 @@ jobs:
           docker-compose logs nginx
           exit 1
 
-      #- name: Run Tests
-      #  run: task ci
+      - name: Run Tests
+        run: task ci
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v4

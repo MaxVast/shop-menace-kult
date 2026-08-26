@@ -14,9 +14,9 @@ services:
     environment:
       APP_ENV: ${APP_ENV:-dev}
       APP_DEBUG: ${APP_DEBUG:-1}
-      XDEBUG_MODE: ${XDEBUG_MODE:-off}
+      XDEBUG_MODE: debug
       XDEBUG_CONFIG: >-
-        client_host=172.22.112.1
+        client_host=172.18.0.1
         idekey=PHPSTORM
       # This should correspond to the server declared in PHPStorm `Preferences | Languages & Frameworks | PHP | Servers`
       # Then PHPStorm will use the corresponding path mappings

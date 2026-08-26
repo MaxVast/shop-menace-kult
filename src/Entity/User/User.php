@@ -2,6 +2,7 @@
 
 namespace App\Entity\User;
 
+use App\Entity\Cart\Cart;
 use App\Entity\Traits\TimestampableEntityTrait;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,32 +14,35 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface {
+class User implements UserInterface, PasswordAuthenticatedUserInterface
+{
+    use TimestampableEntityTrait;
 
     #[ORM\Id, ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?Uuid $id = null;
 
-    #[ORM\Column(type:"string", length:180)]
+    #[ORM\Column(type: 'string', length: 180)]
     #[Assert\NotBlank]
     private string $username;
 
-    #[ORM\Column(type:"string", length:180, unique:true)]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank]
     private string $email;
 
-    #[ORM\Column(type:'json')]
+    #[ORM\Column(type: 'json')]
     private array $roles = ['ROLE_USER'];
 
-    #[ORM\Column(type:'string')]
+    #[ORM\Column(type: 'string')]
     #[Assert\NotBlank]
     private string $password;
 
     #[ORM\Embedded(class: Address::class)]
     private Address $address;
 
-    use TimestampableEntityTrait;
+    #[ORM\OneToOne(targetEntity: Cart::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Cart $cart = null;
 
     public function __construct()
     {
@@ -47,23 +51,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
         $this->address = new Address();
     }
 
-    public function getId(): ?Uuid { return $this->id;}
+    public function getId(): ?Uuid
+    {
+        return $this->id;
+    }
 
-    public function getUsername(): string { return $this->username; }
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
 
     public function setUsername(string $username): void
     {
         $this->username = $username;
     }
 
-    public function getEmail(): string { return $this->email; }
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
 
     public function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    public function getPassword(): string { return $this->password; }
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
 
     public function setPassword(string $password): void
     {
@@ -72,11 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
 
     public function getRoles(): array
     {
-        $roles = $this->roles;
-
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return array_unique([...$this->roles, 'ROLE_USER']);
     }
 
     public function setRoles(array $roles): self
@@ -86,18 +98,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
         return $this;
     }
 
-    public function getCreatedAt(): \DateTimeInterface { return $this->createdAt; }
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
 
-    public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
 
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }
 
-    public function getAddress(): Address { return $this->address; }
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
 
-    public function eraseCredentials(): void {}
+    public function eraseCredentials(): void
+    {
+    }
 
-    public function getUserIdentifier(): string { return $this->getEmail(); }
+    public function getUserIdentifier(): string
+    {
+        return $this->getEmail();
+    }
+
+    public function getCart(): ?Cart
+    {
+        return $this->cart;
+    }
+
+    public function setCart(Cart $cart): self
+    {
+        $this->cart = $cart;
+
+        return $this;
+    }
 }

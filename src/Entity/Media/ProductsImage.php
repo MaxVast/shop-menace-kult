@@ -2,7 +2,7 @@
 
 namespace App\Entity\Media;
 
-use App\Entity\Product\Products;
+use App\Entity\Product\Product;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,16 +13,13 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class ProductsImage extends MediaObject
 {
     #[Assert\Valid]
-    #[ORM\ManyToOne(targetEntity: Products::class, inversedBy: 'images')]
-    protected ?Products $products = null;
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'images')]
+    protected ?Product $products = null;
 
     #[Assert\File(maxSize: '2M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'])]
     #[Vich\UploadableField(mapping: 'product_images', fileNameProperty: 'name')]
     public ?File $file = null;
 
-    /**
-     * @param File|null $file
-     */
     public function setFile(?File $file = null): void
     {
         $this->file = $file;
@@ -36,20 +33,17 @@ class ProductsImage extends MediaObject
         }
     }
 
-    /**
-     * @return File|null
-     */
     public function getFile(): ?File
     {
         return $this->file;
     }
 
-    public function getProducts(): ?Products
+    public function getProducts(): ?Product
     {
         return $this->products;
     }
 
-    public function setProducts(Products $products): self
+    public function setProducts(Product $products): self
     {
         $products->addImage($this);
         $this->products = $products;
@@ -61,7 +55,7 @@ class ProductsImage extends MediaObject
 
     public function setRelation(object $object): self
     {
-        if ($object instanceof Products) {
+        if ($object instanceof Product) {
             $this->setProducts($object);
 
             return $this;
@@ -70,7 +64,7 @@ class ProductsImage extends MediaObject
         throw new \InvalidArgumentException(sprintf('Expected instance of %s, %s given.', self::getRelationClassname(), \gettype($object)));
     }
 
-    public function getRelation(): Products
+    public function getRelation(): Product
     {
         return $this->products;
     }
@@ -82,6 +76,6 @@ class ProductsImage extends MediaObject
 
     public static function getRelationClassname(): string
     {
-        return Products::class;
+        return Product::class;
     }
 }

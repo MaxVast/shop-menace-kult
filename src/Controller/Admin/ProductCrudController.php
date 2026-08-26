@@ -2,36 +2,32 @@
 
 namespace App\Controller\Admin;
 
-
-use App\Entity\Product\Products;
+use App\Entity\Product\Product;
 use App\Form\Type\Admin\ProductsImageType;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 
 class ProductCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return Products::class;
+        return Product::class;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -61,7 +57,7 @@ class ProductCrudController extends AbstractCrudController
                     'by_reference' => false,
                 ])
                 ->formatValue(function ($value, $entity) {
-                    return implode(', ', $entity->getCategories()->map(fn($c) => $c->getName())->toArray());
+                    return implode(', ', $entity->getCategories()->map(fn ($c) => $c->getName())->toArray());
                 }),
 
             MoneyField::new('price', 'Prix impression')
@@ -98,8 +94,8 @@ class ProductCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             CollectionField::new('images', 'Images')
-                ->setRequired($pageName !== Crud::PAGE_EDIT)
-                ->setFormTypeOptions($pageName == Crud::PAGE_EDIT ? ['allow_delete' => false] : [])
+                ->setRequired(Crud::PAGE_EDIT !== $pageName)
+                ->setFormTypeOptions(Crud::PAGE_EDIT == $pageName ? ['allow_delete' => false] : [])
                 ->allowAdd()
                 ->allowDelete()
                 ->setEntryType(ProductsImageType::class)
@@ -108,11 +104,10 @@ class ProductCrudController extends AbstractCrudController
                 ])
                 ->onlyOnForms(),
 
-
             ChoiceField::new('status', 'Statut')
                 ->setChoices(array_combine(
-                    Products::STATUSES,
-                    Products::STATUSES
+                    Product::STATUSES,
+                    Product::STATUSES
                 ))
                 ->setFormTypeOption('empty_data', 'draft'),
         ];
@@ -132,7 +127,7 @@ class ProductCrudController extends AbstractCrudController
     {
         $id = $request->query->get('entityId');
 
-        $product = $em->getRepository(Products::class)->find($id);
+        $product = $em->getRepository(Product::class)->find($id);
 
         if (!$product) {
             throw $this->createNotFoundException('Produit non trouvé');
@@ -140,7 +135,7 @@ class ProductCrudController extends AbstractCrudController
 
         $form = $this->createFormBuilder($product)
             ->add('status', ChoiceType::class, [
-                'choices' => array_combine(Products::STATUSES, Products::STATUSES),
+                'choices' => array_combine(Product::STATUSES, Product::STATUSES),
                 'label' => 'Statut',
             ])
             ->getForm();
@@ -150,6 +145,7 @@ class ProductCrudController extends AbstractCrudController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
             $this->addFlash('success', 'Statut mis à jour !');
+
             return $this->redirect($this->generateUrl('admin_product_index'));
         }
 
@@ -161,7 +157,7 @@ class ProductCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $em, $entityInstance): void
     {
-        if ($entityInstance instanceof Products) {
+        if ($entityInstance instanceof Product) {
             $entityInstance->setUpdatedAt(new \DateTimeImmutable());
         }
 
@@ -173,7 +169,6 @@ class ProductCrudController extends AbstractCrudController
         try {
             parent::persistEntity($em, $entityInstance);
         } catch (\Throwable $e) {
-            dump($e->getMessage(), $e->getTraceAsString());
             throw $e;
         }
     }

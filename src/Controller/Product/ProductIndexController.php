@@ -10,8 +10,9 @@ use Twig\Environment;
 
 #[AsController]
 #[Route('/boutique', name: 'product_index', methods: ['GET'])]
-class ProductIndexController {
-    public function __invoke(Environment $twig, ProductRepository $productRepository) : Response
+class ProductIndexController
+{
+    public function __invoke(Environment $twig, ProductRepository $productRepository): Response
     {
         return new Response($twig->render('product/list.html.twig', [
             'products' => $productRepository->findAll(),

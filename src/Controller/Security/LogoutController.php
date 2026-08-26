@@ -7,7 +7,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
 #[Route('/logout', name: 'logout')]
-class LogoutController {
+class LogoutController
+{
     public function __invoke()
     {
     }
