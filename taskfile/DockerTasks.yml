@@ -52,4 +52,4 @@ tasks:
     desc: 'Remove var/cache, var/log, var/sessions and vendor folders and shutting down docker containers'
     cmds:
       - '{{.PHP_BUILD}} rm -rf var/cache var/log var/sessions vendor'
-      - docker-compose down --volumes $(docker volume ls -f name=api-suzuki-care)--remove-orphans
+      - docker-compose down --volumes $(docker volume ls -f name=shop-menace-kult)--remove-orphans
